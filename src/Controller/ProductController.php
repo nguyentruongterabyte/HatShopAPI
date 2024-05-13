@@ -12,14 +12,18 @@ class ProductController {
   private $amount;
   private $id;
   private $key;
+  private $factory;
+  private $isUploadImage;
 
-  public function __construct($db, $requestMethod, $page, $amount, $id, $key) {
+  public function __construct($db, $requestMethod, $page, $amount, $id, $key, $factory, $isUploadImage) {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
     $this->page = $page;
     $this->amount = $amount;
     $this->id = $id;
     $this->key = $key;
+    $this->factory = $factory;
+    $this->isUploadImage = $isUploadImage;
     $this->productGateway = new ProductGateway($db);
   }
 
@@ -34,10 +38,19 @@ class ProductController {
           $response = $this->getFeatured();
         } else if ($this->key) {
           $response = $this->searchProducts($this->key);
+        } else {
+          $response = $this->getQuantity();
         }
         break;
       case 'POST':
-        $response = $this->createProductFromRequest();
+        if ($this->isUploadImage) {
+          $response = $this->postImage();
+        } else {
+          $response = $this->createProduct();
+        }
+        break;
+      case 'PUT':
+        $response = $this->upDateProduct();
         break;
       case 'DELETE':
         $response = $this->delete();
@@ -54,6 +67,95 @@ class ProductController {
     }
   }
 
+  private function updateProduct() {
+    parse_str(file_get_contents("php://input"), $_PUT);
+    $input = $_PUT;
+
+    if (!isset($input["maSanPham"])) {
+      return $this->unprocessableEntityResponse();
+    }
+    $product = $this->productGateway->find($input["maSanPham"]);
+    if (empty(get_object_vars((object)$product))) {
+      return $this->notFoundResponse();
+    }
+    
+    if (!$this->validateProduct($input)) {
+      return $this->unprocessableEntityResponse();
+    }
+    $this->productGateway->update($input);
+    $response['status_code_header'] = 'HTTP/1.1 200 OK';
+    $response['body'] = [
+      'status' => 200,
+      'message' => 'Cập nhật dữ liệu thành công'
+    ];
+    return $response;
+  }
+
+  private function postImage() {
+    $input = $_POST;
+    $id = isset($input['maSanPham']) ? $input['maSanPham'] : -1;
+    $product = (object)[];
+    $storage = $this->factory->createStorage();
+    $storageBucket = $storage->getBucket();
+
+    if ($id != -1) {
+      $product = $this->productGateway->find($id);
+      if (empty(get_object_vars((object)$product))) {
+        return $this->notFoundResponse();
+      } else {
+        // Xóa hình ảnh sản phẩm trên firebase
+        $imageURL = $product['hinhAnh'];
+        // tách path thành object gồm
+        //"scheme":"https",
+        //"host":"...",
+        //"path":"\/v0\/b\/hatshop-75393.appspot.com\/o\/663857bbe4a8e.jpg"
+        //"query":"..."}
+        $urlParts = parse_url($imageURL);
+        
+        // Lấy phần tử path trong urlParts
+        $pathParts = explode('/', $urlParts['path']);
+
+        // Lấy phần cuối của đường link
+        $objectName = urldecode(end($pathParts));
+        $object = $storageBucket->object($objectName);
+
+        // Kiểm tra ảnh nếu có tồn tại trên firebase không
+        // Nếu có thì thực hiện xóa khỏi firebase
+        if ($object->exists()) {
+          $object->delete();
+        }
+      } 
+    }
+
+    // Tải hình ảnh mới lên firebase
+    if (isset($_FILES['file'])) {
+      // Tạo ra một tên duy nhất cho file đê upload lên firebase
+      $filename = uniqid() . '.jpg';
+
+      $object = $storageBucket->upload(
+        file_get_contents($_FILES['file']['tmp_name']),
+        [
+          'name' => $filename
+        ]
+      );
+
+      // Lấy đường link của hình ảnh
+      $downloadURL = $object->signedUrl(new \DateTime('+10 year'));
+
+    } else {
+      return $this->unprocessableEntityResponse();
+    }
+
+    $response['status_code_header'] = 'HTTP/1.1 200 OK';
+    $response['body'] = [
+      'status' => 200,
+      'message' => "Thành công",
+      'result' => $downloadURL
+    ];
+    return $response;
+  }
+
+
   private function searchProducts($key) {
     $result = $this->productGateway->search($key);
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
@@ -67,7 +169,7 @@ class ProductController {
 
   private function getById($id) {
     $result = $this->productGateway->find($id);
-    if (!$result) {
+    if (empty(get_object_vars((object)$result))) {
       return $this->notFoundResponse();
     }
 
@@ -81,12 +183,11 @@ class ProductController {
   }
 
 
-
   private function delete() {
     parse_str(file_get_contents("php://input"), $_DELETE);
     $id = $_DELETE['maSanPham'];
     $result = $this->productGateway->find($id);
-    if (!$result) {
+    if (empty(get_object_vars((object)$result))) {
       return $this->notFoundResponse();
     }
 
@@ -123,7 +224,7 @@ class ProductController {
     return $response;
   }
 
-  private function createProductFromRequest() {
+  private function createProduct() {
     $input = $_POST;
     if (!$this->validateProduct($input)) {
       return $this->unprocessableEntityResponse();
@@ -134,6 +235,18 @@ class ProductController {
     $response['body'] = [
       'status' => 200,
       'message' => 'Thêm sản phẩm mới thành công'
+    ];
+    return $response;
+  }
+
+  private function getQuantity() {
+    $result = $this->productGateway->getQuantity();
+    $response['status_code_header'] = 'HTTP/1.1 200 OK';
+
+    $response['body'] = [
+      'status' => 200,
+      'message' => 'Lấy số lượng thành sản phẩm công',
+      'result' => $result
     ];
     return $response;
   }

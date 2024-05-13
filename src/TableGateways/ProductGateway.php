@@ -1,5 +1,6 @@
 <?php
 namespace Src\TableGateways;
+use ArrayIterator;
 
 class ProductGateway {
   private $db = null;
@@ -84,6 +85,39 @@ class ProductGateway {
     }
   }
 
+
+  /**
+   * Update product
+   * @param array $input
+   * @return int
+   */
+  public function update(Array $input) {
+    $statement = "UPDATE sanpham 
+                  SET tenSanPham = :tenSanPham, 
+                      soLuong = :soLuong, 
+                      gioiTinh = :gioiTinh, 
+                      mauSac = :mauSac, 
+                      hinhAnh = :hinhAnh, 
+                      giaSanPham = :giaSanPham 
+                  WHERE maSanPham = :maSanPham
+                  ";
+    try {
+      $statement = $this->db->prepare($statement);
+      $statement->execute(array(
+        'maSanPham' => $input['maSanPham'] ?? null,
+        'tenSanPham' => $input['tenSanPham'] ?? null,
+        'soLuong' => $input['soLuong'] ?? null,
+        'gioiTinh' => $input['gioiTinh'] ?? null,
+        'mauSac' => $input['mauSac'] ?? null,
+        'hinhAnh' => $input['hinhAnh'] ?? null,
+        'giaSanPham'=> $input['giaSanPham'] ?? null
+      ));
+      return $statement->rowCount();
+    } catch (\PDOException $e) {
+      exit($e->getMessage());
+    }
+  }
+
   /**
    * get product by id refer to maSanPham
    * @param int $id
@@ -95,19 +129,46 @@ class ProductGateway {
       $statement = $this->db->prepare($statement);
       $statement->execute(array('maSanPham' => $id));
       $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-      return $result[0];
+
+      if (!empty($result)) {
+        return $result[0];
+      }
+      return new ArrayIterator();
     } catch (\PDOException $e) {
       exit($e -> getMessage());
     }
   }
 
-  
+  /**
+   * Get total product
+   * @return int
+   */
+  public function getQuantity (){
+    $statement = "SELECT COUNT(maSanPham) as total from `sanpham` WHERE soLuong > 0";
 
+    try {
+      $statement = $this->db->prepare($statement);
+      $statement->execute();
+      $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+      if (!empty($result)) {
+        return (int)$result[0]['total'];
+      }
+      return 0;
+    } catch (\PDOException $e) {
+        exit($e->getMessage());
+    }    
+  }
+
+  /**
+   * Search product by key
+   * @param string $key
+   * @return array
+   */
   public function search($key) {
     $statement = "SELECT * FROM `sanpham` WHERE `tenSanPham` LIKE :keySearch";
     try {
         $statement = $this->db->prepare($statement);
-        $statement->execute(array('keySearch' => "%$key%")); // Include the % symbols here
+        $statement->execute(array('keySearch' => "%$key%"));
         $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
     } catch (\PDOException $e) {

@@ -23,6 +23,8 @@ if ($uri[1] !== 'hatshop' || $uri[2] !== 'api' || $uri[3] !== 'product') {
   exit();
 }
 
+$isUploadImage = isset($uri[4]) && strcasecmp($uri[4], 'upload-image') == 0;
+
 $page = isset($params['page']) ? $params['page'] : null;
 $amount = isset($params['amount']) ? $params['amount'] : null;
 $id = isset($params['maSanPham']) ? $params['maSanPham'] : null;
@@ -31,5 +33,5 @@ $key = isset( $params['key']) ? $params['key'] : null;
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 // pass the request method to the ProductController and process the HTTP request;
-$controller = new ProductController($dbConnection, $requestMethod, $page, $amount, $id, $key);
+$controller = new ProductController($dbConnection, $requestMethod, $page, $amount, $id, $key, $factory, $isUploadImage);
 $controller->processRequest();
