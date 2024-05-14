@@ -1,5 +1,7 @@
 <?php
 require '../bootstrap.php';
+
+use Src\Controller\CartController;
 use Src\Controller\ProductController;
 
 header("Access-Control-Allow-Origin: *");
@@ -18,20 +20,33 @@ $uri = explode('/', $uri);
 
 // all of out endpoints start wilt /product
 // everything else results in a 404 Not found
-if ($uri[1] !== 'hatshop' || $uri[2] !== 'api' || $uri[3] !== 'product') {
+if ($uri[1] !== 'hatshop' || $uri[2] !== 'api') {
   header('HTTP/1.1 404 Not Found');
   exit();
 }
 
-$isUploadImage = isset($uri[4]) && strcasecmp($uri[4], 'upload-image') == 0;
+switch ($uri[3]) {
+  case 'product':
+    $isUploadImage = isset($uri[4]) && strcasecmp($uri[4], 'upload-image') == 0;
+    $page = isset($params['page']) ? $params['page'] : null;
+    $amount = isset($params['amount']) ? $params['amount'] : null;
+    $id = isset($params['maSanPham']) ? $params['maSanPham'] : null;
+    $key = isset( $params['key']) ? $params['key'] : null;
 
-$page = isset($params['page']) ? $params['page'] : null;
-$amount = isset($params['amount']) ? $params['amount'] : null;
-$id = isset($params['maSanPham']) ? $params['maSanPham'] : null;
-$key = isset( $params['key']) ? $params['key'] : null;
+    $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-$requestMethod = $_SERVER['REQUEST_METHOD'];
+    // pass the request method to the ProductController and process the HTTP request;
+    $controller = new ProductController($dbConnection, $requestMethod, $page, $amount, $id, $key, $factory, $isUploadImage);
+    $controller->processRequest();
+    break;
+  case 'cart':
+    $userId = isset($params['userId']) ? $params['userId'] : null;
+    $requestMethod = $_SERVER['REQUEST_METHOD'];
+    $controller = new CartController($dbConnection, $requestMethod, $userId);
+    $controller->processRequest();
+    break;
+  default:
+    header('HTTP/1.1 404 Not Found');
+    break;
+}
 
-// pass the request method to the ProductController and process the HTTP request;
-$controller = new ProductController($dbConnection, $requestMethod, $page, $amount, $id, $key, $factory, $isUploadImage);
-$controller->processRequest();

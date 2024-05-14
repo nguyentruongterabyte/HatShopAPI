@@ -1,13 +1,18 @@
 <?php
 namespace Src\Controller;
 
+use Src\TableGateways\CartGateway;
 use Src\TableGateways\ProductGateway;
+use Src\TableGateways\OrderDetailGateway;
+use Src\Utils\Utils;
 
 class ProductController {
   private $db;
   private $requestMethod;
 
   private $productGateway;
+  private $orderDetailGateway;
+  private $cartGateway;
   private $page;
   private $amount;
   private $id;
@@ -25,6 +30,8 @@ class ProductController {
     $this->factory = $factory;
     $this->isUploadImage = $isUploadImage;
     $this->productGateway = new ProductGateway($db);
+    $this->orderDetailGateway = new OrderDetailGateway($db);
+    $this->cartGateway = new CartGateway($db);
   }
 
   public function processRequest() {
@@ -56,7 +63,7 @@ class ProductController {
         $response = $this->delete();
         break;
       default:
-        $response = $this->notFoundResponse();
+        $response = Utils::notFoundResponse("Phương thức không hợp lệ!");
         break;
     }
 
@@ -72,22 +79,19 @@ class ProductController {
     $input = $_PUT;
 
     if (!isset($input["maSanPham"])) {
-      return $this->unprocessableEntityResponse();
+      return Utils::unprocessableEntityResponse("Chưa cung cấp mã sản phẩm");
     }
-    $product = $this->productGateway->find($input["maSanPham"]);
-    if (empty(get_object_vars((object)$product))) {
-      return $this->notFoundResponse();
+    $product = $this->productGateway->find($input["maSanPham"]);  
+    if (!$product) {
+      return Utils::notFoundResponse('Không có thông tin sản phẩm');
+      // return $this->notFoundResponse();
     }
-    
+   
     if (!$this->validateProduct($input)) {
-      return $this->unprocessableEntityResponse();
+      return Utils::unprocessableEntityResponse("Đầu vào không hợp lệ");
     }
     $this->productGateway->update($input);
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Cập nhật dữ liệu thành công'
-    ];
+    $response = Utils::successResponse('Cập nhật dữ liệu thành công');
     return $response;
   }
 
@@ -100,8 +104,8 @@ class ProductController {
 
     if ($id != -1) {
       $product = $this->productGateway->find($id);
-      if (empty(get_object_vars((object)$product))) {
-        return $this->notFoundResponse();
+      if (!$product) {
+        return Utils::notFoundResponse("Không có thông tin sản phẩm");
       } else {
         // Xóa hình ảnh sản phẩm trên firebase
         $imageURL = $product['hinhAnh'];
@@ -143,145 +147,136 @@ class ProductController {
       $downloadURL = $object->signedUrl(new \DateTime('+10 year'));
 
     } else {
-      return $this->unprocessableEntityResponse();
+      return Utils::unprocessableEntityResponse("Chưa cung cấp file");
     }
 
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $response['body'] = [
-      'status' => 200,
-      'message' => "Thành công",
-      'result' => $downloadURL
-    ];
+    $response = Utils::successResponse('Thành công');
+    $response['body']['result'] = $downloadURL;
     return $response;
   }
 
 
   private function searchProducts($key) {
     $result = $this->productGateway->search($key);
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Thành công',
-      'result' => $result
-    ];
+    $response = Utils::successResponse('Thành công');
+    $response['body']['result'] = $result;
     return $response;
   }
 
   private function getById($id) {
     $result = $this->productGateway->find($id);
-    if (empty(get_object_vars((object)$result))) {
-      return $this->notFoundResponse();
+    if (!$result) {
+      return Utils::notFoundResponse("Không có thông tin sản phẩm");
     }
 
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Lấy thông tin sản phẩm thành công',
-      'result' => $result
-    ];
+    $response = Utils::successResponse("Lấy thông tin sản phẩm thành công");
+    $response['body']['result'] = $result;
     return $response;
   }
 
 
   private function delete() {
     parse_str(file_get_contents("php://input"), $_DELETE);
-    $id = $_DELETE['maSanPham'];
-    $result = $this->productGateway->find($id);
-    if (empty(get_object_vars((object)$result))) {
-      return $this->notFoundResponse();
+
+    if (!isset($_DELETE["maSanPham"]) || !$_DELETE["maSanPham"]) {
+      return Utils::unprocessableEntityResponse("Chưa cung cấp mã sản phẩm");
     }
 
-    $this->productGateway->delete($id);
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Xóa sản phẩm thành công'
-    ];
-    return $response;
+    $id = $_DELETE['maSanPham'];
+
+    $result = $this->productGateway->find($id);
+    if (!$result) {
+      return Utils::notFoundResponse("Không có thông tin sản phẩm");
+    }
+
+    if ($this->orderDetailGateway->find($id)) {
+      return Utils::conflictResponse("Sản phẩm đã có trong đơn mua, không thể xóa");
+    }
+
+    if ($this->cartGateway->find($id)) {
+      return Utils::conflictResponse("Sản phẩm đã có trong giỏ hàng của khách hàng, không thể xóa");
+    }
+
+    $rowCount = $this->productGateway->delete($id);
+    
+    if ($rowCount > 0) {
+      return Utils::successResponse("Xóa sản phẩm thành công");
+    } else {
+      return Utils::badRequestResponse("Không thể xóa sản phẩm");
+    }
   }
 
   private function getFeatured() {
     $result = $this->productGateway->getFeatured($this->amount);
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Thành công',
-      'result' => $result
-    ];
+    
+    $response = Utils::successResponse("Thành công");
+    $response["body"]["result"] = $result;
     return $response;
   }
 
   private function getPage() {
     $result = $this->productGateway->getPage($this->page, $this->amount);
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Thành công',
-      'result' => $result
-    ];
+    
+    $response = Utils::successResponse("Thành công");
+    $response["body"]["result"] = $result;
     return $response;
   }
 
   private function createProduct() {
     $input = $_POST;
-    if (!$this->validateProduct($input)) {
-      return $this->unprocessableEntityResponse();
+    $response = $this->validateProduct($input);
+    if ($response['body']['status'] != 200) {
+      return $response;
     }
+    $rowCount = $this->productGateway->create($input);
 
-    $this->productGateway->insert($input);
-    $response['status_code_header'] = 'HTTP/1.1 201 Created';
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Thêm sản phẩm mới thành công'
-    ];
+    if ($rowCount > 0) {
+      $response = Utils::successResponse('Thêm mới sản phẩm thành công');
+      
+    } else {
+      $response = Utils::badRequestResponse("Không thể tạo mới sản phẩm");
+    }
     return $response;
   }
 
   private function getQuantity() {
     $result = $this->productGateway->getQuantity();
-    $response['status_code_header'] = 'HTTP/1.1 200 OK';
-
-    $response['body'] = [
-      'status' => 200,
-      'message' => 'Lấy số lượng thành sản phẩm công',
-      'result' => $result
-    ];
+    
+    $response = Utils::successResponse("Lấy số lượng sản phẩm thành công");
+    $response['body']['result'] = $result; 
     return $response;
   }
 
-  private function notFoundResponse() {
-    $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-    $response['body'] = [
-      'status' => 404,
-      'message' => 'Không tìm thấy sản phẩm'
-    ];
 
-    return $response;
-  }
+  private function validateProduct($input)
+  {
 
-  private function validateProduct($input) {
-    if (
-      !isset($input['tenSanPham']) 
-    || !isset($input['soLuong']) 
-    || !isset($input['gioiTinh'])
-    || !isset($input['mauSac'])
-    || !isset($input['hinhAnh'])
-    || !isset($input['giaSanPham'])
-  ) {
-      return false;
-  }
-
-    return true;
-  }
-
-  private function unprocessableEntityResponse() {
-    $response['status_code_header'] = 'HTTP/1.1 422 Unprocessable Entity';
-    $response['body'] = [
-      'status'=> 422,
-      'message' => 'Đầu vào không hợp lệ',
-    ];
-    return $response;
+    // Chưa nhập tên sản phẩm
+    if (!isset($input['tenSanPham']) || !$input['tenSanPham']) {
+      return Utils::unprocessableEntityResponse("Chưa nhập tên sản phẩm");
+    }
+    // Chưa nhập số lượng
+    else if (!isset($input['soLuong']) || !$input['soLuong']) {
+      return Utils::unprocessableEntityResponse("Chưa nhập số lượng sản phẩm");
+    } 
+    // Chưa chọn giới tính
+    else if (!isset($input['gioiTinh']) || !$input['gioiTinh']) {
+      return Utils::unprocessableEntityResponse("Chưa chọn giới tính");
+    } 
+    // Chưa nhập màu sắc
+    else if (!isset($input['mauSac']) || !$input['mauSac']) {
+      return Utils::unprocessableEntityResponse('Chưa nhập màu sắc');
+    } 
+    // Chưa có hình ảnh
+    else if (!isset($input['hinhAnh']) || !$input['hinhAnh']) {
+      return Utils::unprocessableEntityResponse('Chưa có hình ảnh');
+    }
+    // Chưa có giá sản phẩm 
+    else if (!isset($input['giaSanPham']) || !$input['giaSanPham']) {
+      return Utils::unprocessableEntityResponse('Chưa nhập giá sản phẩm');
+    // Pass
+    } else {
+      return Utils::successResponse("Pass");
+    }
   }
 }

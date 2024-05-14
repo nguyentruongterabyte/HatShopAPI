@@ -1,8 +1,9 @@
 <?php
 namespace Src\TableGateways;
-use ArrayIterator;
 
-class ProductGateway {
+use Src\TableGateways\AbstractTableGateways;
+
+class ProductGateway extends AbstractTableGateways{
   private $db = null;
 
   public function __construct($db) {
@@ -65,7 +66,7 @@ class ProductGateway {
    * @param array $input
    * @return int
    */
-  public function insert(Array $input) {
+  public function create(Array $input) {
     $statement = "INSERT INTO sanpham (tenSanPham, soLuong, gioiTinh, mauSac, hinhAnh, giaSanPham) 
                   VALUES (:tenSanPham, :soLuong, :gioiTinh, :mauSac, :hinhAnh, :giaSanPham)
                  ";
@@ -128,12 +129,8 @@ class ProductGateway {
     try {
       $statement = $this->db->prepare($statement);
       $statement->execute(array('maSanPham' => $id));
-      $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-
-      if (!empty($result)) {
-        return $result[0];
-      }
-      return new ArrayIterator();
+      $result = $statement->fetch(\PDO::FETCH_ASSOC);
+      return $result;
     } catch (\PDOException $e) {
       exit($e -> getMessage());
     }
