@@ -3,6 +3,7 @@ require '../bootstrap.php';
 
 use Src\Controller\CartController;
 use Src\Controller\ProductController;
+use Src\Controller\UserController;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -17,7 +18,8 @@ $queryString = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 // parse 
 parse_str($queryString, $params);
 $uri = explode('/', $uri);
-
+// request method
+$requestMethod = $_SERVER['REQUEST_METHOD'];
 // all of out endpoints start wilt /product
 // everything else results in a 404 Not found
 if ($uri[1] !== 'hatshop' || $uri[2] !== 'api') {
@@ -33,16 +35,22 @@ switch ($uri[3]) {
     $id = isset($params['maSanPham']) ? $params['maSanPham'] : null;
     $key = isset( $params['key']) ? $params['key'] : null;
 
-    $requestMethod = $_SERVER['REQUEST_METHOD'];
-
     // pass the request method to the ProductController and process the HTTP request;
     $controller = new ProductController($dbConnection, $requestMethod, $page, $amount, $id, $key, $factory, $isUploadImage);
     $controller->processRequest();
     break;
   case 'cart':
     $userId = isset($params['userId']) ? $params['userId'] : null;
-    $requestMethod = $_SERVER['REQUEST_METHOD'];
+
     $controller = new CartController($dbConnection, $requestMethod, $userId);
+    $controller->processRequest();
+    break;
+  case 'user':
+    $key = isset($params['key']) ? $params['key'] : null;
+    $reset = isset($params['reset']) ? $params['reset'] : null;
+    $requestName = isset($uri[4]) ? $uri[4] : null;
+
+    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName);
     $controller->processRequest();
     break;
   default:

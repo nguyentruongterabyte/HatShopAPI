@@ -107,11 +107,7 @@ class CartController {
     }
     $rowCount = $this->cartGateway->delete($userId, $productId);
     if ($rowCount > 0) {
-      $response['status_code_header'] = 'HTTP/1.1 200 OK';
-      $response['body'] = [
-        'status' => 200,
-        'message' => 'Xóa sản phẩm khỏi giỏ hàng thành công'
-      ];
+      $response = Utils::successResponse('Xóa sản phẩm khỏi giỏ hàng thành công');
     } else {
       return Utils::badRequestResponse('Không có sản phẩm trong giỏ hàng');
     }

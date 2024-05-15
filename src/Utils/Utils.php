@@ -8,6 +8,14 @@ class Utils {
   protected static $badRequestHeader = 'HTTP/1.1 400 Bad Request';
   protected static $okRequestHeader = 'HTTP/1.1 200 OK';
   protected static $conflictRequestHeader = 'HTTP/1.1 409 Conflict';
+  protected static $forbiddenRequestHeader = 'HTTP/1.1 403 Forbidden';
+  protected static $unauthorizedRequestHeader = 'HTTP/1.1 401 Unauthorized';
+  public static function forbiddenResponse($messages) {
+    $response['status_code_header'] = self::$forbiddenRequestHeader;
+    $response['body']['status'] = 403;
+    $response['body']['message'] = $messages;
+    return $response;
+  }
 
   public static function notFoundResponse($messages) {
     $response['status_code_header'] = self::$notFoundHeader;
@@ -40,6 +48,13 @@ class Utils {
   public static function conflictResponse($messages) {
     $response['status_code_header'] = self::$conflictRequestHeader;
     $response['body']['status'] = 409;
+    $response['body']['message'] = $messages;
+    return $response;
+  }
+
+  public static function unauthorizedResponse($messages) {
+    $response['status_code_header'] = self::$unauthorizedRequestHeader;
+    $response['body']['status'] = 401;
     $response['body']['message'] = $messages;
     return $response;
   }
