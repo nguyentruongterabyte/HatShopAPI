@@ -2,6 +2,7 @@
 require '../bootstrap.php';
 
 use Src\Controller\CartController;
+use Src\Controller\CategoriesController;
 use Src\Controller\ProductController;
 use Src\Controller\UserController;
 
@@ -51,6 +52,10 @@ switch ($uri[3]) {
     $requestName = isset($uri[4]) ? $uri[4] : null;
 
     $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName);
+    $controller->processRequest();
+    break;
+  case 'categories':
+    $controller = new CategoriesController($dbConnection, $requestMethod);
     $controller->processRequest();
     break;
   default:

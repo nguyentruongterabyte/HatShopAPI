@@ -2,6 +2,7 @@
 namespace Src\TableGateways;
 
 use Src\TableGateways\AbstractTableGateways;
+use Src\Utils\Utils;
 
 class ProductGateway extends AbstractTableGateways{
   private $db = null;
@@ -15,49 +16,65 @@ class ProductGateway extends AbstractTableGateways{
    * Get product by page and amount
    * @param int $page
    * @param int $amount
-   * @return array
+   * @return array: array includes objects 
+   * (  maSanPham, 
+   *    tenSanPham,
+   *    soLuong, 
+   *    gioiTinh, 
+   *    mauSac, 
+   *    hinhAnh, 
+   *    trangThai, 
+   *    giaSanPham, 
+   *    daBan
+   * )
    */
   public function getPage($page, $amount) {
-    $pos = ($page - 1) * $amount;
-    $statement 
-    =    "SELECT sp.*, COALESCE(SUM(ct.soLuong), 0) 
-          AS daBan
-					FROM `sanpham` sp
-					LEFT JOIN `chitietdonhang` ct ON sp.maSanPham = ct.maSanPham
-					WHERE sp.soLuong > 0
-					GROUP BY sp.maSanPham
-					ORDER BY sp.maSanPham DESC 
-					LIMIT $pos, $amount
-        ";
+    $statement = "call SP_GET_PRODUCTS_PAGE(:page, :amount)";
     try {
-    
-      $statement = $this->db->query($statement);
+      $statement = $this->db->prepare($statement);
+      $statement->bindParam(":page", $page, \PDO::PARAM_INT);
+      $statement->bindParam(":amount", $amount, \PDO::PARAM_INT);
+      $statement->execute();
       $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
       return $result;
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
   /**
    * get featured products
    * @param int $amount
-   * @return array
+   * @return array: array includes objects 
+   * (  maSanPham, 
+   *    tenSanPham,
+   *    soLuong, 
+   *    gioiTinh, 
+   *    mauSac, 
+   *    hinhAnh, 
+   *    trangThai, 
+   *    giaSanPham, 
+   *    daBan
+   * )
    */
   public function getFeatured($amount) {
-    $statement = "SELECT sp.*, COALESCE(SUM(ct.soLuong), 0) AS daBan
-					FROM `sanpham` sp
-					LEFT JOIN `chitietdonhang` ct ON sp.maSanPham = ct.maSanPham
-					WHERE sp.soLuong > 0
-					GROUP BY sp.maSanPham
-					ORDER BY sp.maSanPham 
-					DESC LIMIT $amount";
+    $statement = "call SP_GET_FEATURED_PRODUCTS (:amount)";
     try {
-      $statement = $this->db->query($statement);
+      $statement = $this->db->prepare($statement);
+      $statement->bindParam(":amount", $amount, \PDO::PARAM_INT);
+      $statement->execute();
       $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
       return $result;
     } catch(\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -82,7 +99,11 @@ class ProductGateway extends AbstractTableGateways{
       ));
       return $statement->rowCount();
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -115,7 +136,11 @@ class ProductGateway extends AbstractTableGateways{
       ));
       return $statement->rowCount();
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -152,7 +177,11 @@ class ProductGateway extends AbstractTableGateways{
       }
       return 0;
     } catch (\PDOException $e) {
-        exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }    
   }
 
@@ -169,7 +198,11 @@ class ProductGateway extends AbstractTableGateways{
         $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
     } catch (\PDOException $e) {
-        exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
 }
 

@@ -1,5 +1,8 @@
 <?php
 namespace Src\TableGateways;
+
+use Src\Utils\Utils;
+
 class CartGateway {
   private $db = null;
 
@@ -25,7 +28,11 @@ class CartGateway {
       ));
       return $statement->rowCount();
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -75,7 +82,11 @@ class CartGateway {
       $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
       return $result;
     } catch(\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -99,7 +110,11 @@ class CartGateway {
         ));
         return $statement->rowCount();
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -121,19 +136,5 @@ class CartGateway {
     }
   }
 
-  private function find2($productId, $userId) {
-    $statement = "SELECT * FROM `giohang` WHERE `userId` = :userId AND `maSanPham` = :maSanPham";
 
-    try {
-      $statement = $this->db->prepare($statement);
-      $statement->execute(array(
-        'maSanPham' => $productId,
-        'userId' => $userId
-      ));
-      $result = $statement->fetch(\PDO::FETCH_ASSOC);
-      return $result;
-    } catch (\PDOException $e) {
-      exit($e -> getMessage());
-    }
-  }
 }

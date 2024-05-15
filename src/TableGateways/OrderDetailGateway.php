@@ -1,6 +1,8 @@
 <?php
 namespace Src\TableGateways;
 
+use Src\Utils\Utils;
+
 class OrderDetailGateway {
   private $db = null;
 
@@ -26,5 +28,16 @@ class OrderDetailGateway {
       exit($e -> getMessage());
     }
   }
+
+  /**
+   * Create many order detail with json send to database
+   * @param array $input
+   * @return int
+   */
+  public function createOrderDetails(array $input)
+  {
+    // code
+  }
+
 
 }

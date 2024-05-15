@@ -1,6 +1,8 @@
 <?php
 namespace Src\TableGateways;
 
+use Src\Utils\Utils;
+
 class UserGateway extends AbstractTableGateways {
 
   private $db = null;
@@ -27,7 +29,11 @@ class UserGateway extends AbstractTableGateways {
       ));
       return $statement->rowCount();
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }  
   }
 
@@ -45,7 +51,11 @@ class UserGateway extends AbstractTableGateways {
       }
       return false;
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -68,7 +78,11 @@ class UserGateway extends AbstractTableGateways {
       $result = $statement->rowCount();
       return $result;
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -85,7 +99,11 @@ class UserGateway extends AbstractTableGateways {
       $result = $statement->fetch(\PDO::FETCH_ASSOC);
       return $result;
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -103,7 +121,11 @@ class UserGateway extends AbstractTableGateways {
       $result = $statement->fetch(\PDO::FETCH_ASSOC);
       return $result;
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
@@ -120,7 +142,11 @@ class UserGateway extends AbstractTableGateways {
       $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
       return $result;
     } catch (\PDOException $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 
