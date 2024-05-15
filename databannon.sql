@@ -40,7 +40,7 @@ CREATE TABLE `chitietdonhang` (
 
 LOCK TABLES `chitietdonhang` WRITE;
 /*!40000 ALTER TABLE `chitietdonhang` DISABLE KEYS */;
-INSERT INTO `chitietdonhang` VALUES (133,168,1,38000),(134,167,1,117000),(135,1,3,100000),(136,165,1,500000),(136,168,1,38000),(137,167,3,117000),(138,1,2,100000),(139,167,1,117000),(139,168,26,38000),(140,167,1,117000),(140,168,26,38000),(141,167,1,117000),(142,167,1,117000),(142,168,26,38000),(143,167,1,117000),(143,168,26,38000),(144,174,3,100000),(145,174,3,100000),(146,174,4,100000),(147,147,1,117000),(147,148,1,38000),(147,151,1,120000),(147,154,1,2700000),(147,155,1,2700000),(147,156,1,2700000),(147,160,1,30000),(147,162,1,200000),(147,163,1,200000),(147,165,1,500000),(148,1,1,100000),(148,2,1,120000),(148,3,1,150000),(148,24,1,30000),(148,25,1,299000),(148,27,1,38000),(148,122,1,35000),(148,140,1,500000),(148,141,1,2700000),(148,154,1,2700000),(149,146,1,500000),(149,149,2,299000),(149,152,1,35000),(149,153,1,100000),(149,156,2,2700000),(149,157,2,2700000),(149,158,1,150000),(149,159,1,150000),(150,143,3,150000),(150,160,1,30000),(150,161,2,30000),(150,162,2,200000),(150,163,1,200000),(150,165,1,500000),(150,167,1,117000),(150,168,1,38000),(151,167,2,117000),(151,168,1,38000),(152,167,2,117000),(153,167,1,117000),(153,168,26,38000);
+INSERT INTO `chitietdonhang` VALUES (133,167,1,117000),(133,168,26,38000),(134,167,1,117000),(135,1,3,100000),(136,165,1,500000),(136,168,1,38000),(137,167,3,117000),(138,1,2,100000),(139,167,1,117000),(139,168,26,38000),(140,167,1,117000),(140,168,26,38000),(141,167,1,117000),(142,167,1,117000),(142,168,26,38000),(143,167,1,117000),(143,168,26,38000),(144,174,3,100000),(145,174,3,100000),(146,174,4,100000),(147,147,1,117000),(147,148,1,38000),(147,151,1,120000),(147,154,1,2700000),(147,155,1,2700000),(147,156,1,2700000),(147,160,1,30000),(147,162,1,200000),(147,163,1,200000),(147,165,1,500000),(148,1,1,100000),(148,2,1,120000),(148,3,1,150000),(148,24,1,30000),(148,25,1,299000),(148,27,1,38000),(148,122,1,35000),(148,140,1,500000),(148,141,1,2700000),(148,154,1,2700000),(149,146,1,500000),(149,149,2,299000),(149,152,1,35000),(149,153,1,100000),(149,156,2,2700000),(149,157,2,2700000),(149,158,1,150000),(149,159,1,150000),(150,143,3,150000),(150,160,1,30000),(150,161,2,30000),(150,162,2,200000),(150,163,1,200000),(150,165,1,500000),(150,167,1,117000),(150,168,1,38000),(151,167,2,117000),(151,168,1,38000),(152,167,2,117000),(153,167,1,117000),(153,168,26,38000),(154,167,1,117000),(154,168,26,38000);
 /*!40000 ALTER TABLE `chitietdonhang` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -52,20 +52,66 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER before_insert_chitietdonhang
-BEFORE INSERT ON chitietdonhang
-FOR EACH ROW
-BEGIN
-	DECLARE v_giaSanPham INT(11);
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger before_insert_chitietdonhang
+before insert on chitietdonhang
+for each row
+begin
+	declare v_giaSanPham int(11);
     
     -- Retrieve the giaSanPham from the sanpham table
-    SELECT giaSanPham INTO v_giaSanPham
-    FROM sanpham
-    WHERE maSanPham = NEW.maSanPham;
+    select giaSanPham into v_giaSanPham
+    from sanpham
+    where maSanPham = new.maSanPham;
     
     -- Set the giaSanPham in the new row
-    SET NEW.giaSanPham = v_giaSanPham;
+    set new.giaSanPham = v_giaSanPham;
 END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger after_insert_chitietdonhang
+after insert on chitietdonhang
+for each row
+begin
+	-- Update the quantity of sanpham table
+    update sanpham 
+    set soLuong = sanPham.soLuong - new.soLuong
+    where sanPham.maSanPham = new.maSanPham;
+end */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger after_delete_chitietdonhang
+after delete on `chitietdonhang`
+for each row
+begin
+	-- update the quantity in sanpham table
+    update sanpham 
+    set sanpham.soLuong = sanpham.soLuong + old.soLuong
+    where sanpham.maSanPham = old.maSanPham;
+end */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -173,7 +219,7 @@ CREATE TABLE `donhang` (
   PRIMARY KEY (`maDonHang`),
   KEY `FK_userId` (`userId`),
   CONSTRAINT `FK_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=154 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=155 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +228,7 @@ CREATE TABLE `donhang` (
 
 LOCK TABLES `donhang` WRITE;
 /*!40000 ALTER TABLE `donhang` DISABLE KEYS */;
-INSERT INTO `donhang` VALUES (133,24,'Tây Nguyên ',1,'38000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(134,24,'Lã Xuân Oai',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-03-28 08:55:41'),(135,24,'Geography ',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-02-28 08:55:41'),(136,24,'Bà rịa Vũng tàu',2,'538000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACp_hbKERjpsBsUaFrbFHoaQ','2024-05-28 08:55:41'),(137,24,'Man thiện',3,'351000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(138,24,'Man Thiện ',2,'200000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACUgPKrdR6N89_TPxu2mEQfw','2024-04-28 08:55:41'),(139,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2023-04-28 08:55:41'),(140,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(141,24,'abc',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Đã giao','','2024-04-28 08:55:41'),(142,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 12:45:08'),(143,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 13:04:13'),(144,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','ACcBETBE9Z5GyaQvQR0V1-7Q','2024-04-28 13:26:50'),(145,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:04'),(146,24,'Chư Kbô',4,'400000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:29'),(147,24,'Ba Ria Vung Tau',10,'9305000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-05-02 10:32:03'),(148,23,'97 Man Thien Tang Nhon Phu A',10,'6672000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:57:47'),(149,23,'97 Man Thien Tang Nhon Phu B',10,'12333000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:59:42'),(150,23,'30 Tan Lap, Chu Kbo, Dak Lak',12,'1795000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 11:45:41'),(151,23,'Ba Ria Vung Tau',3,'272000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','ACeSVAyH5WNjD45L_SNbXAuQ','2024-05-02 13:08:18'),(152,23,'123 Ha Noi',2,'234000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','','2024-05-05 00:29:31'),(153,24,'101 Man Thiện',20,'2000000','0948915051','example@gmail.com','Chờ xác nhận','','2024-05-11 12:12:45');
+INSERT INTO `donhang` VALUES (133,24,'Tây Nguyên ',1,'38000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(134,24,'Lã Xuân Oai',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-03-28 08:55:41'),(135,24,'Geography ',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-02-28 08:55:41'),(136,24,'Bà rịa Vũng tàu',2,'538000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACp_hbKERjpsBsUaFrbFHoaQ','2024-05-28 08:55:41'),(137,24,'Man thiện',3,'351000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(138,24,'Man Thiện ',2,'200000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACUgPKrdR6N89_TPxu2mEQfw','2024-04-28 08:55:41'),(139,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2023-04-28 08:55:41'),(140,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(141,24,'abc',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Đã giao','','2024-04-28 08:55:41'),(142,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 12:45:08'),(143,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 13:04:13'),(144,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','ACcBETBE9Z5GyaQvQR0V1-7Q','2024-04-28 13:26:50'),(145,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:04'),(146,24,'Chư Kbô',4,'400000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:29'),(147,24,'Ba Ria Vung Tau',10,'9305000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-05-02 10:32:03'),(148,23,'97 Man Thien Tang Nhon Phu A',10,'6672000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:57:47'),(149,23,'97 Man Thien Tang Nhon Phu B',10,'12333000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:59:42'),(150,23,'30 Tan Lap, Chu Kbo, Dak Lak',12,'1795000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 11:45:41'),(151,23,'Ba Ria Vung Tau',3,'272000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','ACeSVAyH5WNjD45L_SNbXAuQ','2024-05-02 13:08:18'),(152,23,'123 Ha Noi',2,'234000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','','2024-05-05 00:29:31'),(153,24,'101 Man Thiện',20,'2000000','0948915051','example@gmail.com','Chờ xác nhận','','2024-05-11 12:12:45'),(154,24,'101 Man Thiện',20,'2000000','0948915051','example@gmail.com','Chờ xác nhận','','2024-05-15 11:10:13');
 /*!40000 ALTER TABLE `donhang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -265,7 +311,7 @@ CREATE TABLE `sanpham` (
 
 LOCK TABLES `sanpham` WRITE;
 /*!40000 ALTER TABLE `sanpham` DISABLE KEYS */;
-INSERT INTO `sanpham` VALUES (1,'Washed Cotton Caps Men Cadet Cap Design Flat Top Hat',24,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1184522745/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-americana-v%C3%A0-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eQWSy0ok0umbVrToBbNZ7hbwTD7-75vgee2EaRDLkDk=',0,100000),(2,'Nón Snapback Nón Hiphop Trơn Có Khóa - Đen',34,'Nữ','Vàng tươi','https://media.istockphoto.com/id/1453988945/vi/anh/m%C5%A9-x%C3%B4-m%C3%A0u-v%C3%A0ng-c%C3%A1ch-ly-tr%C3%AAn-m%C3%A0u-tr%E1%BA%AFng.jpg?s=1024x1024&w=is&k=20&c=x3MA6las9ZkUwCC4f4uD5vbS4YCyGGtrdIxxsirTn3c=',0,120000),(3,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',49,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(24,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',29,'Nam','Đen trắng','https://media.istockphoto.com/id/1060912434/vi/vec-to/m%C5%A9-tr%E1%BA%AFng-v%C3%A0-%C4%91en-t%E1%BB%AB-c%C3%A1c-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau.jpg?s=612x612&w=0&k=20&c=Jz_E-l29kqJ1I9Es1D-_5oJJRtT5U9NYClk5qnpzPVQ=',0,30000),(25,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',34,'Nữ','Xanh nước biển','https://media.istockphoto.com/id/1182381130/vi/anh/m%C5%A9-r%E1%BB%99ng-v%C3%A0nh-m%C3%A0u-kem-v%E1%BB%9Bi-d%C3%A2y-%C4%91eo-b%E1%BA%B1ng-v%E1%BA%A3i-%C4%91en-%C4%91%C6%B0%E1%BB%A3c-c%C3%A1ch-ly-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=SlJ7ZATeBYB1MKnTImR6TdRhLo92g1Y3CwQZtzR7178=',0,299000),(26,'Moussa 81',0,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(27,'Mũ ông già Noel đỏ và trắng lễ hội',29,'Unisex','Đỏ trắng','https://media.istockphoto.com/id/1071753308/vi/anh/%C3%B4ng-gi%C3%A0-noel-gi%C3%BAp-thi%E1%BA%BFt-k%E1%BA%BF-m%C5%A9-%C4%91%E1%BB%8F-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-con-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt-cho-trang-tr%C3%AD-thi%E1%BA%BFt.jpg?s=612x612&w=0&k=20&c=ozum2ju40_RRRhkhpyT0oIi-NbwF6lkXQTmBSgHFi2g=',0,38000),(120,'Mũ diễu hành màu xanh lá cây với thắt lưng và khóa',30,'Unisex','Xanh lục','https://media.istockphoto.com/id/184957982/vi/anh/m%C5%A9-leprechaun-xanh-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=2VqEQucvOXJMBWiK8LWJFDhzEWLpkcEy4wHEoXqBUkw=',0,117000),(121,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',35,'Nam','Xanh đậm','https://media.istockphoto.com/id/488500609/vi/anh/m%C5%A9-c%E1%BA%A3nh-s%C3%A1t-t%E1%BB%AB-nhi%E1%BB%81u-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau-minh-h%E1%BB%8Da-3d.jpg?s=1024x1024&w=is&k=20&c=V__NJkgMYPyAoQZITHnjH-xGT_1ZYNsGMnFgNkvBe-w=',0,200000),(122,'Nón: Mũ rơm',49,'Unisex','Vàng nâu','https://media.istockphoto.com/id/184397074/vi/anh/m%C5%A9-r%C6%A1m.jpg?s=1024x1024&w=is&k=20&c=G0aV8hUH7KW0JZMfFhZko6vM2Z1vRPcgx97yOTU8eg0=',0,35000),(138,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',35,'Nữ','Xanh nước biển','https://media.istockphoto.com/id/1182381130/vi/anh/m%C5%A9-r%E1%BB%99ng-v%C3%A0nh-m%C3%A0u-kem-v%E1%BB%9Bi-d%C3%A2y-%C4%91eo-b%E1%BA%B1ng-v%E1%BA%A3i-%C4%91en-%C4%91%C6%B0%E1%BB%A3c-c%C3%A1ch-ly-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=SlJ7ZATeBYB1MKnTImR6TdRhLo92g1Y3CwQZtzR7178=',0,299000),(139,'Moussa 81',50,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(140,'Mũ cao bồi da màu nâu',29,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1182540276/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-americana-v%C3%A0-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eSzFoljqYfYuAP859_LlBaPDhALhxO3mgDcvz4jF92M=',0,500000),(141,'Moussa 81',49,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(143,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',47,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(144,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',30,'Nam','Đen trắng','https://media.istockphoto.com/id/1060912434/vi/vec-to/m%C5%A9-tr%E1%BA%AFng-v%C3%A0-%C4%91en-t%E1%BB%AB-c%C3%A1c-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau.jpg?s=612x612&w=0&k=20&c=Jz_E-l29kqJ1I9Es1D-_5oJJRtT5U9NYClk5qnpzPVQ=',0,30000),(145,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',35,'Nam','Xanh đậm','https://media.istockphoto.com/id/488500609/vi/anh/m%C5%A9-c%E1%BA%A3nh-s%C3%A1t-t%E1%BB%AB-nhi%E1%BB%81u-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau-minh-h%E1%BB%8Da-3d.jpg?s=1024x1024&w=is&k=20&c=V__NJkgMYPyAoQZITHnjH-xGT_1ZYNsGMnFgNkvBe-w=',0,200000),(146,'Mũ cao bồi da màu nâu',29,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1182540276/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-americana-v%C3%A0-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eSzFoljqYfYuAP859_LlBaPDhALhxO3mgDcvz4jF92M=',0,500000),(147,'Mũ diễu hành màu xanh lá cây với thắt lưng và khóa',30,'Unisex','Xanh lục','https://media.istockphoto.com/id/184957982/vi/anh/m%C5%A9-leprechaun-xanh-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=2VqEQucvOXJMBWiK8LWJFDhzEWLpkcEy4wHEoXqBUkw=',0,117000),(148,'Mũ ông già Noel đỏ và trắng lễ hội',30,'Unisex','Đỏ trắng','https://media.istockphoto.com/id/1071753308/vi/anh/%C3%B4ng-gi%C3%A0-noel-gi%C3%BAp-thi%E1%BA%BFt-k%E1%BA%BF-m%C5%A9-%C4%91%E1%BB%8F-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-con-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt-cho-trang-tr%C3%AD-thi%E1%BA%BFt.jpg?s=612x612&w=0&k=20&c=ozum2ju40_RRRhkhpyT0oIi-NbwF6lkXQTmBSgHFi2g=',0,38000),(149,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',33,'Nữ','Xanh nước biển','149.jpg',0,299000),(150,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',35,'Nữ','Xanh nước biển','https://media.istockphoto.com/id/1182381130/vi/anh/m%C5%A9-r%E1%BB%99ng-v%C3%A0nh-m%C3%A0u-kem-v%E1%BB%9Bi-d%C3%A2y-%C4%91eo-b%E1%BA%B1ng-v%E1%BA%A3i-%C4%91en-%C4%91%C6%B0%E1%BB%A3c-c%C3%A1ch-ly-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=SlJ7ZATeBYB1MKnTImR6TdRhLo92g1Y3CwQZtzR7178=',0,299000),(151,'Nón Snapback Nón Hiphop Trơn Có Khóa - Đen',35,'Nữ','Vàng tươi','https://media.istockphoto.com/id/1453988945/vi/anh/m%C5%A9-x%C3%B4-m%C3%A0u-v%C3%A0ng-c%C3%A1ch-ly-tr%C3%AAn-m%C3%A0u-tr%E1%BA%AFng.jpg?s=1024x1024&w=is&k=20&c=x3MA6las9ZkUwCC4f4uD5vbS4YCyGGtrdIxxsirTn3c=',0,120000),(152,'Nón: Mũ rơm',49,'Unisex','Vàng nâu','https://media.istockphoto.com/id/184397074/vi/anh/m%C5%A9-r%C6%A1m.jpg?s=1024x1024&w=is&k=20&c=G0aV8hUH7KW0JZMfFhZko6vM2Z1vRPcgx97yOTU8eg0=',0,35000),(153,'Washed Cotton Caps Men Cadet Cap Design Flat Top Hat',29,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1184522745/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-americana-v%C3%A0-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eQWSy0ok0umbVrToBbNZ7hbwTD7-75vgee2EaRDLkDk=',0,100000),(154,'Moussa 81',49,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(155,'Moussa 81',50,'Unisex','Đen','155.jpg',0,2700000),(156,'Moussa 81',48,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(157,'Moussa 81',48,'Unisex','Đen','157.jpg',0,2700000),(158,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',49,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(159,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',49,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(160,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',29,'Nam','Đen trắng','https://media.istockphoto.com/id/1060912434/vi/vec-to/m%C5%A9-tr%E1%BA%AFng-v%C3%A0-%C4%91en-t%E1%BB%AB-c%C3%A1c-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau.jpg?s=612x612&w=0&k=20&c=Jz_E-l29kqJ1I9Es1D-_5oJJRtT5U9NYClk5qnpzPVQ=',0,30000),(161,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',28,'Nam','Đen trắng','161.jpg',0,30000),(162,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',33,'Nam','Xanh đậm','162.jpg',0,200000),(163,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',34,'Nam','Xanh đậm','https://media.istockphoto.com/id/488500609/vi/anh/m%C5%A9-c%E1%BA%A3nh-s%C3%A1t-t%E1%BB%AB-nhi%E1%BB%81u-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau-minh-h%E1%BB%8Da-3d.jpg?s=1024x1024&w=is&k=20&c=V__NJkgMYPyAoQZITHnjH-xGT_1ZYNsGMnFgNkvBe-w=',0,200000),(165,'Mũ cao bồi da màu nâu',28,'Nam','Nâu sẫm','165.jpg',0,500000),(167,'Mũ diễu hành màu xanh lá cây với thắt lưng và khóa',1996,'Unisex','Xanh lục','https://storage.googleapis.com/hatshop-75393.appspot.com/6638d966639f8.jpg?GoogleAccessId=firebase-adminsdk-fm0dm%40hatshop-75393.iam.gserviceaccount.com&Expires=2030534503&Signature=Hnox93dhgEVb8%2FwTn3br0m9Q%2FDXf1UcSUquDZZ%2BjGJRxVK%2BumRJuPPlfvzsM%2BsaD0u3QqyEKK9yjIGMtZCYC4xooXZ5h1PLz7EuQjOTred%2B6VVNos4sFZSBV1kv%2BlDiGP1%2F%2FtjicUbKkeNhNLeKAAJZs068%2Fxukk8SAVNOK8aVi7iOrUvJog2I%2BzOLc%2Fp0Irt1CwNJ9i7RChZeEj8J%2Fl0xONHe%2BC%2BFYzgUTU%2FJtEljapvvJo87WnJ2iycDIj%2F5wBeMXzULWq303OGKxY9Q4%2Bkc2Ywe%2BYutsWkQgiatx0LwvVLGowPBZR9ZkcFQGk%2FTkylpa1pO45%2B1BJcqvQzDrIfQ%3D%3D&generation=1715001702527123',0,117000),(168,'Mũ ông già Noel đỏ và trắng lễ hội',1973,'Unisex','Đỏ trắng','168.jpg',0,38000),(174,'Nón da tai thỏ',10,'Unisex','Đen','169.jpg',0,100000);
+INSERT INTO `sanpham` VALUES (1,'Washed Cotton Caps Men Cadet Cap Design Flat Top Hat',24,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1184522745/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-americana-v%C3%A0-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eQWSy0ok0umbVrToBbNZ7hbwTD7-75vgee2EaRDLkDk=',0,100000),(2,'Nón Snapback Nón Hiphop Trơn Có Khóa - Đen',34,'Nữ','Vàng tươi','https://media.istockphoto.com/id/1453988945/vi/anh/m%C5%A9-x%C3%B4-m%C3%A0u-v%C3%A0ng-c%C3%A1ch-ly-tr%C3%AAn-m%C3%A0u-tr%E1%BA%AFng.jpg?s=1024x1024&w=is&k=20&c=x3MA6las9ZkUwCC4f4uD5vbS4YCyGGtrdIxxsirTn3c=',0,120000),(3,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',49,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(24,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',29,'Nam','Đen trắng','https://media.istockphoto.com/id/1060912434/vi/vec-to/m%C5%A9-tr%E1%BA%AFng-v%C3%A0-%C4%91en-t%E1%BB%AB-c%C3%A1c-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau.jpg?s=612x612&w=0&k=20&c=Jz_E-l29kqJ1I9Es1D-_5oJJRtT5U9NYClk5qnpzPVQ=',0,30000),(25,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',34,'Nữ','Xanh nước biển','https://media.istockphoto.com/id/1182381130/vi/anh/m%C5%A9-r%E1%BB%99ng-v%C3%A0nh-m%C3%A0u-kem-v%E1%BB%9Bi-d%C3%A2y-%C4%91eo-b%E1%BA%B1ng-v%E1%BA%A3i-%C4%91en-%C4%91%C6%B0%E1%BB%A3c-c%C3%A1ch-ly-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=SlJ7ZATeBYB1MKnTImR6TdRhLo92g1Y3CwQZtzR7178=',0,299000),(26,'Moussa 81',0,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(27,'Mũ ông già Noel đỏ và trắng lễ hội',29,'Unisex','Đỏ trắng','https://media.istockphoto.com/id/1071753308/vi/anh/%C3%B4ng-gi%C3%A0-noel-gi%C3%BAp-thi%E1%BA%BFt-k%E1%BA%BF-m%C5%A9-%C4%91%E1%BB%8F-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-con-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt-cho-trang-tr%C3%AD-thi%E1%BA%BFt.jpg?s=612x612&w=0&k=20&c=ozum2ju40_RRRhkhpyT0oIi-NbwF6lkXQTmBSgHFi2g=',0,38000),(120,'Mũ diễu hành màu xanh lá cây với thắt lưng và khóa',30,'Unisex','Xanh lục','https://media.istockphoto.com/id/184957982/vi/anh/m%C5%A9-leprechaun-xanh-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=2VqEQucvOXJMBWiK8LWJFDhzEWLpkcEy4wHEoXqBUkw=',0,117000),(121,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',35,'Nam','Xanh đậm','https://media.istockphoto.com/id/488500609/vi/anh/m%C5%A9-c%E1%BA%A3nh-s%C3%A1t-t%E1%BB%AB-nhi%E1%BB%81u-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau-minh-h%E1%BB%8Da-3d.jpg?s=1024x1024&w=is&k=20&c=V__NJkgMYPyAoQZITHnjH-xGT_1ZYNsGMnFgNkvBe-w=',0,200000),(122,'Nón: Mũ rơm',49,'Unisex','Vàng nâu','https://media.istockphoto.com/id/184397074/vi/anh/m%C5%A9-r%C6%A1m.jpg?s=1024x1024&w=is&k=20&c=G0aV8hUH7KW0JZMfFhZko6vM2Z1vRPcgx97yOTU8eg0=',0,35000),(138,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',35,'Nữ','Xanh nước biển','https://media.istockphoto.com/id/1182381130/vi/anh/m%C5%A9-r%E1%BB%99ng-v%C3%A0nh-m%C3%A0u-kem-v%E1%BB%9Bi-d%C3%A2y-%C4%91eo-b%E1%BA%B1ng-v%E1%BA%A3i-%C4%91en-%C4%91%C6%B0%E1%BB%A3c-c%C3%A1ch-ly-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=SlJ7ZATeBYB1MKnTImR6TdRhLo92g1Y3CwQZtzR7178=',0,299000),(139,'Moussa 81',50,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(140,'Mũ cao bồi da màu nâu',29,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1182540276/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-americana-v%C3%A0-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eSzFoljqYfYuAP859_LlBaPDhALhxO3mgDcvz4jF92M=',0,500000),(141,'Moussa 81',49,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(143,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',47,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(144,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',30,'Nam','Đen trắng','https://media.istockphoto.com/id/1060912434/vi/vec-to/m%C5%A9-tr%E1%BA%AFng-v%C3%A0-%C4%91en-t%E1%BB%AB-c%C3%A1c-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau.jpg?s=612x612&w=0&k=20&c=Jz_E-l29kqJ1I9Es1D-_5oJJRtT5U9NYClk5qnpzPVQ=',0,30000),(145,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',35,'Nam','Xanh đậm','https://media.istockphoto.com/id/488500609/vi/anh/m%C5%A9-c%E1%BA%A3nh-s%C3%A1t-t%E1%BB%AB-nhi%E1%BB%81u-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau-minh-h%E1%BB%8Da-3d.jpg?s=1024x1024&w=is&k=20&c=V__NJkgMYPyAoQZITHnjH-xGT_1ZYNsGMnFgNkvBe-w=',0,200000),(146,'Mũ cao bồi da màu nâu',29,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1182540276/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-americana-v%C3%A0-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eSzFoljqYfYuAP859_LlBaPDhALhxO3mgDcvz4jF92M=',0,500000),(147,'Mũ diễu hành màu xanh lá cây với thắt lưng và khóa',30,'Unisex','Xanh lục','https://media.istockphoto.com/id/184957982/vi/anh/m%C5%A9-leprechaun-xanh-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-tr%E1%BA%AFng.jpg?s=612x612&w=0&k=20&c=2VqEQucvOXJMBWiK8LWJFDhzEWLpkcEy4wHEoXqBUkw=',0,117000),(148,'Mũ ông già Noel đỏ và trắng lễ hội',30,'Unisex','Đỏ trắng','https://media.istockphoto.com/id/1071753308/vi/anh/%C3%B4ng-gi%C3%A0-noel-gi%C3%BAp-thi%E1%BA%BFt-k%E1%BA%BF-m%C5%A9-%C4%91%E1%BB%8F-b%E1%BB%8B-c%C3%B4-l%E1%BA%ADp-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-con-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt-cho-trang-tr%C3%AD-thi%E1%BA%BFt.jpg?s=612x612&w=0&k=20&c=ozum2ju40_RRRhkhpyT0oIi-NbwF6lkXQTmBSgHFi2g=',0,38000),(149,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',33,'Nữ','Xanh nước biển','149.jpg',0,299000),(150,'Mũ rộng vành màu kem với dây đeo bằng vải đen được cách ly trên nền trắng với đường cắt.',35,'Nữ','Xanh nước biển','https://media.istockphoto.com/id/1182381130/vi/anh/m%C5%A9-r%E1%BB%99ng-v%C3%A0nh-m%C3%A0u-kem-v%E1%BB%9Bi-d%C3%A2y-%C4%91eo-b%E1%BA%B1ng-v%E1%BA%A3i-%C4%91en-%C4%91%C6%B0%E1%BB%A3c-c%C3%A1ch-ly-tr%C3%AAn-n%E1%BB%81n-tr%E1%BA%AFng-v%E1%BB%9Bi-%C4%91%C6%B0%E1%BB%9Dng-c%E1%BA%AFt.jpg?s=612x612&w=0&k=20&c=SlJ7ZATeBYB1MKnTImR6TdRhLo92g1Y3CwQZtzR7178=',0,299000),(151,'Nón Snapback Nón Hiphop Trơn Có Khóa - Đen',35,'Nữ','Vàng tươi','https://media.istockphoto.com/id/1453988945/vi/anh/m%C5%A9-x%C3%B4-m%C3%A0u-v%C3%A0ng-c%C3%A1ch-ly-tr%C3%AAn-m%C3%A0u-tr%E1%BA%AFng.jpg?s=1024x1024&w=is&k=20&c=x3MA6las9ZkUwCC4f4uD5vbS4YCyGGtrdIxxsirTn3c=',0,120000),(152,'Nón: Mũ rơm',49,'Unisex','Vàng nâu','https://media.istockphoto.com/id/184397074/vi/anh/m%C5%A9-r%C6%A1m.jpg?s=1024x1024&w=is&k=20&c=G0aV8hUH7KW0JZMfFhZko6vM2Z1vRPcgx97yOTU8eg0=',0,35000),(153,'Washed Cotton Caps Men Cadet Cap Design Flat Top Hat',29,'Nam','Nâu sẫm','https://media.istockphoto.com/id/1184522745/vi/anh/c%C6%B0%E1%BB%A1i-ng%E1%BB%B1a-rodeo-v%C4%83n-h%C3%B3a-mi%E1%BB%81n-t%C3%A2y-hoang-d%C3%A3-ch%E1%BB%A7-%C4%91%E1%BB%81-kh%C3%A1i-ni%E1%BB%87m-%C3%A2m-nh%E1%BA%A1c-%C4%91%E1%BB%93ng-qu%C3%AA-americana-v%C3%A0-m%E1%BB%B9-v%E1%BB%9Bi.jpg?s=1024x1024&w=is&k=20&c=eQWSy0ok0umbVrToBbNZ7hbwTD7-75vgee2EaRDLkDk=',0,100000),(154,'Moussa 81',49,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(155,'Moussa 81',50,'Unisex','Đen','155.jpg',0,2700000),(156,'Moussa 81',48,'Unisex','Đen','https://media.istockphoto.com/id/1186076393/vi/anh/trang-ph%E1%BB%A5c-th%E1%BB%9Di-trang-th%E1%BB%9Di-trang-nam-c%E1%BB%95-%C4%91i%E1%BB%83n-v%C3%A0-%E1%BA%A3o-thu%E1%BA%ADt-hi%E1%BB%83n-th%E1%BB%8B-%C3%BD-t%C6%B0%E1%BB%9Fng-kh%C3%A1i-ni%E1%BB%87m-v%E1%BB%9Bi-3-4-g%C3%B3c.jpg?s=612x612&w=0&k=20&c=O0vcSFbGIL-gOLW4Vns2eY6sMEOhi5cpIPxR_YOcWh4=',0,2700000),(157,'Moussa 81',48,'Unisex','Đen','157.jpg',0,2700000),(158,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',49,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(159,'Mũ adidas Aeroready Baseball Cap \"Black\" HD7242',49,'Unisex','Xanh viền trắng','https://media.istockphoto.com/id/535518012/vi/anh/ph%E1%BB%A5-n%E1%BB%AF-m%C5%A9-xanh-v%E1%BB%9Bi-m%E1%BA%A1ng-che-m%E1%BA%B7t.jpg?s=1024x1024&w=is&k=20&c=O17EaK8ZGJXvPpYGTKWtCMqLyeRQ9BNjrslYXMqQ2Sk=',0,150000),(160,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',29,'Nam','Đen trắng','https://media.istockphoto.com/id/1060912434/vi/vec-to/m%C5%A9-tr%E1%BA%AFng-v%C3%A0-%C4%91en-t%E1%BB%AB-c%C3%A1c-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau.jpg?s=612x612&w=0&k=20&c=Jz_E-l29kqJ1I9Es1D-_5oJJRtT5U9NYClk5qnpzPVQ=',0,30000),(161,'Mũ bóng chày màu đen trống 4 xem trên nền trắng',28,'Nam','Đen trắng','161.jpg',0,30000),(162,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',33,'Nam','Xanh đậm','162.jpg',0,200000),(163,'Mũ cảnh sát từ nhiều góc độ khác nhau minh họa 3d',34,'Nam','Xanh đậm','https://media.istockphoto.com/id/488500609/vi/anh/m%C5%A9-c%E1%BA%A3nh-s%C3%A1t-t%E1%BB%AB-nhi%E1%BB%81u-g%C3%B3c-%C4%91%E1%BB%99-kh%C3%A1c-nhau-minh-h%E1%BB%8Da-3d.jpg?s=1024x1024&w=is&k=20&c=V__NJkgMYPyAoQZITHnjH-xGT_1ZYNsGMnFgNkvBe-w=',0,200000),(165,'Mũ cao bồi da màu nâu',28,'Nam','Nâu sẫm','165.jpg',0,500000),(167,'Mũ diễu hành màu xanh lá cây với thắt lưng và khóa',1994,'Unisex','Xanh lục','https://storage.googleapis.com/hatshop-75393.appspot.com/6638d966639f8.jpg?GoogleAccessId=firebase-adminsdk-fm0dm%40hatshop-75393.iam.gserviceaccount.com&Expires=2030534503&Signature=Hnox93dhgEVb8%2FwTn3br0m9Q%2FDXf1UcSUquDZZ%2BjGJRxVK%2BumRJuPPlfvzsM%2BsaD0u3QqyEKK9yjIGMtZCYC4xooXZ5h1PLz7EuQjOTred%2B6VVNos4sFZSBV1kv%2BlDiGP1%2F%2FtjicUbKkeNhNLeKAAJZs068%2Fxukk8SAVNOK8aVi7iOrUvJog2I%2BzOLc%2Fp0Irt1CwNJ9i7RChZeEj8J%2Fl0xONHe%2BC%2BFYzgUTU%2FJtEljapvvJo87WnJ2iycDIj%2F5wBeMXzULWq303OGKxY9Q4%2Bkc2Ywe%2BYutsWkQgiatx0LwvVLGowPBZR9ZkcFQGk%2FTkylpa1pO45%2B1BJcqvQzDrIfQ%3D%3D&generation=1715001702527123',0,117000),(168,'Mũ ông già Noel đỏ và trắng lễ hội',1921,'Unisex','Đỏ trắng','168.jpg',0,38000),(174,'Nón da tai thỏ',10,'Unisex','Đen','169.jpg',0,100000);
 /*!40000 ALTER TABLE `sanpham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -322,6 +368,135 @@ LOCK TABLES `user` WRITE;
 INSERT INTO `user` VALUES (23,'nguyenthaitruong.entertainment@gmail.com','$2y$10$w7VeCglvw2vH2TIHLFG55ufdBmWB.BF43cnQfjCHIwcm7L9CwtkQq','Trưởng Chiller','0987654321'),(24,'nguyenthaitruong1223@gmail.com','$2y$10$TWgdtiyCQL694gIY0OQVa.3SXUlzYnBaftoxDDo.3f4SZbtJlyJ42','Nguyễn Thái Trưởng','0948915051'),(25,'nguyenthaitruong12233@gmail.com','$2y$10$RuJzs68D6FFYDZJIwlM42ekfdnnehd9TgjrsMuYbvhAv.0dB.C5qC','Nguyễn Thái Trưởng','0948915051'),(26,'phamngocbao2104@gmail.com','$2y$10$Gla1EMMo0zDaEv8/ijgTduoLj7vyD7aQ4SK0bTb1CRhSEDuCTvcTa','Bảo Phạm','0132659475'),(28,'n20dccn083@student.ptithcm.edu.vn','$2y$10$b66ZUa57k.meWbPP5IiXHuo2idgN31LkiYDhG5zgpC0d.nm4DDVh.','Nguyen Thai Truong','0948915051'),(29,'nguyenthaitruong.entertainment1@gmail.com','$2y$10$92fEaJmR6C7YtSB.WwopYuJpZYG6EaQCw0gz2Q8trjkZts3zRtH92','Nguyễn Trưởng','0948915051');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'databannon'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `SP_CREATE_ORDER_DETAILS` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_CREATE_ORDER_DETAILS`(
+	in maDonHang int,
+    in mangChiTiet json
+)
+begin
+	declare i int default 0;
+    declare n int;
+	declare maSanPham int;
+    declare soLuong int;
+    declare exit handler for sqlexception
+    begin
+		-- Rollback the transaction in case of any error
+		rollback;
+	end;
+    
+    -- Start a new transaction
+    set n = json_length(mangChiTiet);
+    while i < n do
+		set maSanPham = json_unquote(json_extract(mangChiTiet, concat('$[', i, '].maSanPham')));
+        set soLuong = json_unquote(json_extract(mangChiTiet, concat('$[', i, '].soLuong')));
+        
+        -- Insert into chitietdonhang table
+        insert into chitietdonhang(maDonHang, maSanPham, soLuong) 
+        values (maDonHang, maSanPham, soLuong);
+        
+        set i = i + 1;
+    end while;
+    
+    -- Commit the transaction if all operrrtions succeed
+    commit;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_GET_FEATURED_PRODUCTS` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_GET_FEATURED_PRODUCTS`(in amount INT)
+begin
+	select sp.* 
+    from sanpham sp
+    left join chitietdonhang ct
+    on sp.maSanPham = ct.maSanPham
+    where sp.soLuong > 0
+    group by sp.maSanPham
+    order by sp.maSanPham desc
+    limit amount;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_GET_PRODUCTS_IN_A_ORDER` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_GET_PRODUCTS_IN_A_ORDER`(in maDonHang int)
+begin
+	select ct.maSanPham, tenSanPham, ct.giaSanPham, ct.soLuong, gioiTinh, mauSac, hinhAnh
+    from chitietdonhang ct
+    inner join sanpham sp 
+    on ct.maSanPham = sp.maSanPham
+    where ct.maDonHang = maDonHang;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_GET_PRODUCTS_PAGE` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_GET_PRODUCTS_PAGE`(
+	in page int,
+    in amount int
+)
+begin
+	declare pos int;
+    set pos = (page - 1) * amount;
+    select sp.*, coalesce(SUM(ct.soLuong), 0) as daBan
+    from sanpham sp
+    left join chitietdonhang ct ON sp.maSanPham = ct.maSanPham
+    where sp.soLuong > 0
+    group by sp.maSanPham
+    order by sp.maSanPham desc
+    limit pos, amount;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -332,4 +507,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-15 14:26:40
+-- Dump completed on 2024-05-15 22:47:10
