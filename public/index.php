@@ -3,6 +3,7 @@ require '../bootstrap.php';
 
 use Src\Controller\CartController;
 use Src\Controller\CategoriesController;
+use Src\Controller\OrderController;
 use Src\Controller\ProductController;
 use Src\Controller\UserController;
 
@@ -28,6 +29,8 @@ if ($uri[1] !== 'hatshop' || $uri[2] !== 'api') {
   exit();
 }
 
+$requestName = isset($uri[4]) ? $uri[4] : null;
+
 switch ($uri[3]) {
   case 'product':
     $isUploadImage = isset($uri[4]) && strcasecmp($uri[4], 'upload-image') == 0;
@@ -49,13 +52,18 @@ switch ($uri[3]) {
   case 'user':
     $key = isset($params['key']) ? $params['key'] : null;
     $reset = isset($params['reset']) ? $params['reset'] : null;
-    $requestName = isset($uri[4]) ? $uri[4] : null;
 
     $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName);
     $controller->processRequest();
     break;
   case 'categories':
     $controller = new CategoriesController($dbConnection, $requestMethod);
+    $controller->processRequest();
+    break;
+  case 'order':
+    $userId = isset($params['userId']) ? $params['userId'] : null;
+
+    $controller = new OrderController( $dbConnection, $requestMethod, $userId, $requestName);
     $controller->processRequest();
     break;
   default:

@@ -223,4 +223,5 @@ class ProductGateway extends AbstractTableGateways{
       exit($e -> getMessage());
     } 
   }
+
 }
