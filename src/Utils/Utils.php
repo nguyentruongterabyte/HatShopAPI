@@ -14,28 +14,28 @@ class Utils {
   
   
   public static function forbiddenResponse($messages) {
-    $response['status_code_header'] = self::$forbiddenRequestHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 403;
     $response['body']['message'] = $messages;
     return $response;
   }
 
   public static function notFoundResponse($messages) {
-    $response['status_code_header'] = self::$notFoundHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 404;
     $response['body']['message'] = $messages;
     return $response;
   }
 
   public static function unprocessableEntityResponse($messages) {
-    $response['status_code_header'] = self::$unprocessableEntityHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 422;
     $response['body']['message'] = $messages;
     return $response;
   }
 
   public static function badRequestResponse($messages) {
-    $response['status_code_header'] = self::$badRequestHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 400;
     $response['body']['message'] = $messages;
     return $response;
@@ -49,21 +49,21 @@ class Utils {
   }
   
   public static function conflictResponse($messages) {
-    $response['status_code_header'] = self::$conflictRequestHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 409;
     $response['body']['message'] = $messages;
     return $response;
   }
 
   public static function unauthorizedResponse($messages) {
-    $response['status_code_header'] = self::$unauthorizedRequestHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 401;
     $response['body']['message'] = $messages;
     return $response;
   }
   public static function internalServerErrorResponse($messages)
   {
-    $response['status_code_header'] = self::$internalServerErrorHeader;
+    $response['status_code_header'] = self::$okRequestHeader;
     $response['body']['status'] = 500;
     $response['body']['message'] = $messages;
     return $response;

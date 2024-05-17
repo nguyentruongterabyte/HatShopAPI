@@ -1,10 +1,12 @@
 <?php
 require '../bootstrap.php';
 
+use Src\Controller\BillController;
 use Src\Controller\CartController;
 use Src\Controller\CategoriesController;
 use Src\Controller\OrderController;
 use Src\Controller\ProductController;
+use Src\Controller\ReportController;
 use Src\Controller\UserController;
 
 header("Access-Control-Allow-Origin: *");
@@ -64,6 +66,18 @@ switch ($uri[3]) {
     $userId = isset($params['userId']) ? $params['userId'] : null;
 
     $controller = new OrderController( $dbConnection, $requestMethod, $userId, $requestName);
+    $controller->processRequest();
+    break;
+  case 'reports':
+    $year = isset($params['year']) ? $params['year'] : 2024;
+
+    $controller = new ReportController($dbConnection, $requestMethod, $requestName, $year);
+    $controller->processRequest();
+    break;
+  case 'bill':
+    $orderId = isset($params['maDonHang']) ? $params['maDonHang'] : 0;
+
+    $controller = new BillController($dbConnection, $requestMethod, $orderId);
     $controller->processRequest();
     break;
   default:

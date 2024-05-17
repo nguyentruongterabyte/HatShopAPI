@@ -17,7 +17,7 @@ class OrderGateway {
    * @return object
    */
   public function find($id) {
-    $statement = "SELECT * FROM `donhang` WHERE `maDonHang` = :maDonHang";
+    $statement = "SELECT * FROM `v_orders` WHERE `maDonHang` = :maDonHang";
   
     try {
       $statement = $this->db->prepare($statement);
