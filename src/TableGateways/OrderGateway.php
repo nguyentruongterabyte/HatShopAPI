@@ -38,7 +38,7 @@ class OrderGateway {
    * @param array $input
    * @return int
    */
-  public function create(array $input)
+  public function create(Array $input)
   {
     $statement = "INSERT INTO 
                   `donhang`

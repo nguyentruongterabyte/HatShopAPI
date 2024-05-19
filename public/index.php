@@ -4,8 +4,10 @@ require '../bootstrap.php';
 use Src\Controller\BillController;
 use Src\Controller\CartController;
 use Src\Controller\CategoriesController;
+use Src\Controller\LocationController;
 use Src\Controller\OrderController;
 use Src\Controller\ProductController;
+use Src\Controller\RatingController;
 use Src\Controller\ReportController;
 use Src\Controller\UserController;
 
@@ -78,6 +80,14 @@ switch ($uri[3]) {
     $orderId = isset($params['maDonHang']) ? $params['maDonHang'] : 0;
 
     $controller = new BillController($dbConnection, $requestMethod, $orderId);
+    $controller->processRequest();
+    break;
+  case 'location':
+    $controller = new LocationController( $dbConnection, $requestMethod);
+    $controller->processRequest();
+    break;
+  case 'rating':
+    $controller = new RatingController($dbConnection, $requestMethod, $requestName, $factory);
     $controller->processRequest();
     break;
   default:

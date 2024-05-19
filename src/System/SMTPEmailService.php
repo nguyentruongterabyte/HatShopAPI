@@ -4,6 +4,7 @@ namespace Src\System;
 require '../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Src\Utils\Utils;
 
 class SMTPEmailService {
   private $mail = null;
@@ -31,7 +32,11 @@ class SMTPEmailService {
       $this->mail -> From =  getenv('SMTP_EMAIL');
       $this->mail -> FromName = "Hat shop";
     } catch (Exception $e) {
-      exit($e->getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 

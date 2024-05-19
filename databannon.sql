@@ -136,7 +136,7 @@ CREATE TABLE `danhgia` (
   PRIMARY KEY (`maDanhGia`),
   UNIQUE KEY `maDonHang` (`maDonHang`),
   CONSTRAINT `danhgia_ibfk_1` FOREIGN KEY (`maDonHang`) REFERENCES `donhang` (`maDonHang`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,6 +145,7 @@ CREATE TABLE `danhgia` (
 
 LOCK TABLES `danhgia` WRITE;
 /*!40000 ALTER TABLE `danhgia` DISABLE KEYS */;
+INSERT INTO `danhgia` VALUES (17,5,'ok','ok','ok',141,'2024-05-19 05:26:33');
 /*!40000 ALTER TABLE `danhgia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,7 +313,7 @@ CREATE TABLE `hinhanhdanhgia` (
   PRIMARY KEY (`maHinhAnh`),
   KEY `maDanhGia` (`maDanhGia`),
   CONSTRAINT `hinhanhdanhgia_ibfk_1` FOREIGN KEY (`maDanhGia`) REFERENCES `danhgia` (`maDanhGia`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,6 +322,7 @@ CREATE TABLE `hinhanhdanhgia` (
 
 LOCK TABLES `hinhanhdanhgia` WRITE;
 /*!40000 ALTER TABLE `hinhanhdanhgia` DISABLE KEYS */;
+INSERT INTO `hinhanhdanhgia` VALUES (5,17,'https://storage.googleapis.com/hatshop-75393.appspot.com/6649282d8e93d.jpg?GoogleAccessId=firebase-adminsdk-fm0dm%40hatshop-75393.iam.gserviceaccount.com&Expires=2031603247&Signature=N74fBTHsqqiuLo4PSmIm%2Bh1h6RGusHbc0cYWoKswU0dWJs4DfpkzXzwh1KeIVSoXhAha1Pzg4gD4zP7ilkzFt53Jn3UZ%2BfeguQjoKqsta52rtMfXjLXdQA9i5amo%2B6Z8HxAWFFIRTgaTfDPDjMZHG1kJabOjKyvomzT00XktEmC5mHzelJTuSnC0ikJoRs7AwRPGzBmndfbt1Ms01h8yc13NGdg4s1c%2FDqUF%2FpmeQs1KDzTulfrU%2BeD4iSRwbaKzDZMFWXSR71M9LSG3uIcCwXHNyzMrH67P73zRxtMNIoDB8xnIBYgRl0kK2o68C1GWWeoDzM6sgIFefxQpCT%2BoEg%3D%3D&generation=1716070445572008');
 /*!40000 ALTER TABLE `hinhanhdanhgia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -367,7 +369,7 @@ CREATE TABLE `toado` (
   `viDo` double NOT NULL DEFAULT 10.84897,
   `tenViTri` varchar(255) NOT NULL DEFAULT 'Hat Shop',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -376,7 +378,7 @@ CREATE TABLE `toado` (
 
 LOCK TABLES `toado` WRITE;
 /*!40000 ALTER TABLE `toado` DISABLE KEYS */;
-INSERT INTO `toado` VALUES (1,106.78736,10.84897,'Hat Shop'),(2,106.78736,10.84897,'Hat shop 1'),(3,106.77346933633089,10.852838157696748,'Hat shop'),(4,106.73675425350666,10.788906021119725,'Hat Shop'),(5,106.7249595746398,10.76825443229899,'Hat shop'),(6,106.72515235841274,10.76676270180724,'Hat shop'),(7,106.77510414272547,10.77883236484694,'Hat shop'),(8,106.78736,10.84897,'Hat shop 1');
+INSERT INTO `toado` VALUES (1,106.78736,10.84897,'Hat Shop'),(2,106.78736,10.84897,'Hat shop 1'),(3,106.77346933633089,10.852838157696748,'Hat shop'),(4,106.73675425350666,10.788906021119725,'Hat Shop'),(5,106.7249595746398,10.76825443229899,'Hat shop'),(6,106.72515235841274,10.76676270180724,'Hat shop'),(7,106.77510414272547,10.77883236484694,'Hat shop'),(8,106.78736,10.84897,'Hat shop 1'),(9,106.78736,10.84897,'Hat Shop');
 /*!40000 ALTER TABLE `toado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -534,6 +536,50 @@ begin
         -- Insert into chitietdonhang table
         insert into chitietdonhang(maDonHang, maSanPham, soLuong) 
         values (maDonHang, maSanPham, soLuong);
+        
+        set i = i + 1;
+    end while;
+    
+    -- Commit the transaction if all operrrtions succeed
+    commit;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_CREATE_RATING_IMAGES` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_CREATE_RATING_IMAGES`(
+	in maDanhGia int,
+    in mangChiTiet json
+)
+begin
+	declare i int default 0;
+    declare n int;
+    declare hinhAnhURL text;
+    declare exit handler for sqlexception
+    begin
+		-- Rollback the transaction in case of any error
+		rollback;
+	end;
+    
+    -- Start a new transaction
+    set n = json_length(mangChiTiet);
+    while i < n do
+		set hinhAnhURL = json_unquote(json_extract(mangChiTiet, concat('$[', i, '].hinhAnhURL')));
+        
+        -- Insert into chitietdonhang table
+        insert into hinhanhdanhgia(maDanhGia, hinhAnhURL) 
+        values (maDanhGia, hinhAnhURL);
         
         set i = i + 1;
     end while;
@@ -737,4 +783,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-17 10:36:58
+-- Dump completed on 2024-05-19 12:38:28

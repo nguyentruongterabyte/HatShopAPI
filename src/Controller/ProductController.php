@@ -2,6 +2,7 @@
 namespace Src\Controller;
 
 use Src\TableGateways\CartGateway;
+use Src\TableGateways\ImageFactory;
 use Src\TableGateways\ProductGateway;
 use Src\TableGateways\OrderDetailGateway;
 use Src\Utils\Utils;
@@ -19,6 +20,7 @@ class ProductController {
   private $key;
   private $factory;
   private $isUploadImage;
+  private $imageFactory;
 
   public function __construct($db, $requestMethod, $page, $amount, $id, $key, $factory, $isUploadImage) {
     $this->db = $db;
@@ -28,6 +30,7 @@ class ProductController {
     $this->id = $id;
     $this->key = $key;
     $this->factory = $factory;
+    $this->imageFactory = new ImageFactory($factory);
     $this->isUploadImage = $isUploadImage;
     $this->productGateway = new ProductGateway($db);
     $this->orderDetailGateway = new OrderDetailGateway($db);
@@ -99,8 +102,6 @@ class ProductController {
     $input = $_POST;
     $id = isset($input['maSanPham']) ? $input['maSanPham'] : -1;
     $product = (object)[];
-    $storage = $this->factory->createStorage();
-    $storageBucket = $storage->getBucket();
 
     if ($id != -1) {
       $product = $this->productGateway->find($id);
@@ -109,42 +110,16 @@ class ProductController {
       } else {
         // Xóa hình ảnh sản phẩm trên firebase
         $imageURL = $product['hinhAnh'];
-        // tách path thành object gồm
-        //"scheme":"https",
-        //"host":"...",
-        //"path":"\/v0\/b\/hatshop-75393.appspot.com\/o\/663857bbe4a8e.jpg"
-        //"query":"..."}
-        $urlParts = parse_url($imageURL);
-        
-        // Lấy phần tử path trong urlParts
-        $pathParts = explode('/', $urlParts['path']);
 
-        // Lấy phần cuối của đường link
-        $objectName = urldecode(end($pathParts));
-        $object = $storageBucket->object($objectName);
-
-        // Kiểm tra ảnh nếu có tồn tại trên firebase không
-        // Nếu có thì thực hiện xóa khỏi firebase
-        if ($object->exists()) {
-          $object->delete();
-        }
+        $this->imageFactory->delete($imageURL);
       } 
     }
 
     // Tải hình ảnh mới lên firebase
-    if (isset($_FILES['file'])) {
-      // Tạo ra một tên duy nhất cho file đê upload lên firebase
-      $filename = uniqid() . '.jpg';
+    if (isset($_FILES['file']) && $_FILES['file']['tmp_name']) {
 
-      $object = $storageBucket->upload(
-        file_get_contents($_FILES['file']['tmp_name']),
-        [
-          'name' => $filename
-        ]
-      );
-
-      // Lấy đường link của hình ảnh
-      $downloadURL = $object->signedUrl(new \DateTime('+10 year'));
+      // get image url
+      $downloadURL = $this->imageFactory->upload($_FILES);
 
     } else {
       return Utils::unprocessableEntityResponse("Chưa cung cấp file");
