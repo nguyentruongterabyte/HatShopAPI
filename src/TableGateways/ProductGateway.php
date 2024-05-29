@@ -157,7 +157,11 @@ class ProductGateway extends AbstractTableGateways{
       $result = $statement->fetch(\PDO::FETCH_ASSOC);
       return $result;
     } catch (\PDOException $e) {
-      exit($e -> getMessage());
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
     }
   }
 

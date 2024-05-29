@@ -35,6 +35,9 @@ class RatingController {
           $response = Utils::notFoundResponse('Không tìm thấy request');
         }
         break;
+      case 'DELETE':
+        $response = $this->delete();
+        break;
       default:
         $response = Utils::notFoundResponse('Phương thức không hợp lệ');
         break;
@@ -44,6 +47,26 @@ class RatingController {
       header('Content-Type: application/json');
       echo json_encode($response['body']);
     }
+  }
+
+  private function delete() {
+    parse_str(file_get_contents('php://input'), $_DELETE);
+    if (!isset($_DELETE['maDanhGia'])) {
+      return Utils::unprocessableEntityResponse("Chưa cung cấp mã đánh giá");
+    }
+    $ratingId = $_DELETE['maDanhGia'];
+    if (!$this->ratingGateway->find($ratingId)) {
+      return Utils::notFoundResponse("Không tìm thấy đánh giá");
+    }
+
+    $rowCount = $this->ratingGateway->delete($ratingId);
+
+    if ($rowCount > 0) {
+      $response = Utils::successResponse('Xóa đánh giá hàng thành công');
+    } else {
+      return Utils::badRequestResponse('Không có sản phẩm trong giỏ hàng');
+    }
+    return $response;
   }
 
   private function uploadImage() {
@@ -72,18 +95,22 @@ class RatingController {
 
     if ($rowCount > 0) {
       $maxId = $this->ratingGateway->maxId($input['maDonHang']);
-      $rowCount = $this->ratingImagesGateway->createRatingImages($maxId, $input['hinhAnhDanhGia']);
-
-      if ($rowCount > 0) {
-        $response = Utils::successResponse('Tạo đánh giá thành công');
-        $response['body']['result'] = $maxId;
-      } else {
-        $this->ratingGateway->delete($maxId);
-        $response = Utils::badRequestResponse('Lỗi khi thêm hình ảnh đánh giá');
+      $hinhAnhDanhGia = $input['hinhAnhDanhGia'] ?? null;
+      if (isset($hinhAnhDanhGia) && !empty($hinhAnhDanhGia) && $hinhAnhDanhGia != "[]") {
+        $rowCount = $this->ratingImagesGateway->createRatingImages($maxId, $input['hinhAnhDanhGia']);
+        if ($rowCount > 0) {
+          $response = Utils::successResponse('Tạo đánh giá thành công');
+          $response['body']['result'] = $maxId;
+        } else {
+          $this->ratingGateway->delete($maxId);
+          $response = Utils::badRequestResponse('Lỗi khi thêm hình ảnh đánh giá');
+        }
       }
     } else {
-      $response = Utils::badRequestResponse('Không thể tạo đánh giá');
+      return Utils::badRequestResponse('Không thể tạo đánh giá');
     }
+
+    $response = Utils::successResponse('Tạo đánh giá thành công');
     return $response;
   }
 

@@ -14,6 +14,12 @@ class RatingGateway {
    * @param array $input
    * @return int
    */
+
+  /**
+   * Create a rating
+   * @param array $input
+   * @return int
+   */
   public function create(Array $input) {
     $statement = "INSERT INTO `danhgia`
                   (`soSao`, `dungVoiMoTa`, `chatLuongSanPham`, `nhanXet`, `maDonHang`)
@@ -28,7 +34,6 @@ class RatingGateway {
           'maDonHang' => $input['maDonHang'],
           ));
       $result = $statement->rowCount();
-      echo $result;
       return $result;
     } catch (\PDOException $e) {
       $response = Utils::internalServerErrorResponse($e->getMessage());
@@ -82,6 +87,28 @@ class RatingGateway {
    
   }
 
+  public function find($ratingId) {
+    $statement = "SELECT * FROM `danhgia` WHERE `maDanhGia` = :maDanhGia";
+  
+    try {
+      $statement = $this->db->prepare($statement);
+      $statement->execute(array("maDanhGia"=> $ratingId));
+      $result = $statement->fetch(\PDO::FETCH_ASSOC);
+      return $result;
+    } catch (\PDOException $e) {
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
+    }
+  }
+
+  /**
+   * Delete rating by ratingId (maDanhGia)
+   * @param int $id
+   * @return int
+   */
   public function delete($id) {
     $statement = "DELETE FROM `danhgia` WHERE `maDanhGia` = :maDanhGia";
 
@@ -97,5 +124,24 @@ class RatingGateway {
       echo json_encode($response['body']);
       exit();
     } 
+  }
+
+
+  public function getByProductId($productId)
+  {
+    $statement = 'call SP_GET_PRODUCT_RATING(:productId)';
+    try {
+      $statement = $this->db->prepare($statement);
+      $statement->bindParam(":productId", $productId, \PDO::PARAM_INT);
+      $statement->execute();
+      $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+      return $result;
+    } catch (\PDOException $e) {
+      $response = Utils::internalServerErrorResponse($e->getMessage());
+      header($response['status_code_header']);
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
+    }
   }
 }

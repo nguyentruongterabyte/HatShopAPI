@@ -5,6 +5,8 @@ use Src\TableGateways\CartGateway;
 use Src\TableGateways\ImageFactory;
 use Src\TableGateways\ProductGateway;
 use Src\TableGateways\OrderDetailGateway;
+use Src\TableGateways\RatingGateway;
+use Src\TableGateways\RatingImagesGateway;
 use Src\Utils\Utils;
 
 class ProductController {
@@ -13,6 +15,8 @@ class ProductController {
 
   private $productGateway;
   private $orderDetailGateway;
+  private $ratingGateway;
+  private $ratingImagesGateway;
   private $cartGateway;
   private $page;
   private $amount;
@@ -34,6 +38,8 @@ class ProductController {
     $this->isUploadImage = $isUploadImage;
     $this->productGateway = new ProductGateway($db);
     $this->orderDetailGateway = new OrderDetailGateway($db);
+    $this->ratingGateway = new RatingGateway($db);
+    $this->ratingImagesGateway = new RatingImagesGateway($db);
     $this->cartGateway = new CartGateway($db);
   }
 
@@ -146,6 +152,15 @@ class ProductController {
 
     $response = Utils::successResponse("Lấy thông tin sản phẩm thành công");
     $response['body']['result'] = $result;
+    // Lấy đánh giá của sản phẩm
+    $ratingList = $this->ratingGateway->getByProductId($id);
+    // Lấy hình ảnh đánh giá cho mỗi sản phẩm
+    foreach ($ratingList as $index => $rating) {
+      $imageList = $this->ratingImagesGateway->getRatingImages($rating['maDanhGia']);
+      $rating['hinhAnhDanhGiaList'] = $imageList;
+      $ratingList[$index] = $rating;
+    }
+    $response['body']['result']['danhGiaSanPham'] = $ratingList;
     return $response;
   }
 

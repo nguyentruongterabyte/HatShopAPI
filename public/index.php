@@ -10,12 +10,18 @@ use Src\Controller\ProductController;
 use Src\Controller\RatingController;
 use Src\Controller\ReportController;
 use Src\Controller\UserController;
+use Src\System\JWT;
+use Src\Utils\Utils;
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+// JWT
+$secretKey = getenv("SECRET_KEY") ?? '3fN8@#sjk12#FJeio1@!$jifD;fi13Rjkd81';
+$jwt = new JWT($secretKey);
 
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -33,9 +39,50 @@ if ($uri[1] !== 'hatshop' || $uri[2] !== 'api') {
   exit();
 }
 
+// endpoint
+$endpoint = $uri[3];
 $requestName = isset($uri[4]) ? $uri[4] : null;
 
-switch ($uri[3]) {
+$requiresAuth = false;
+
+$protectedEndpoints = [
+  'product' => ['page'],
+  'order' => [],
+  'cart' => [],
+  'rating' => [],
+  'bill' => []
+];
+
+
+if (isset($protectedEndpoints[$endpoint])) {
+  if (count($protectedEndpoints[$endpoint]) === 0 || (isset($uri[4]) && in_array($uri[4], $protectedEndpoints[$endpoint]))) {
+    $requiresAuth = true;
+  }
+}
+
+if ($requiresAuth) {
+  $token = $jwt->getBearerToken();
+  if ($token) {
+    $decoded = $jwt->validateJWT($token);
+
+    if (!$decoded) {
+      $response = Utils::unauthorizedResponse('Từ chối truy cập. Token không hợp lệ');
+      header('HTTP/1.1 401 Unauthorized');
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
+    } 
+
+  } else {
+    $response = Utils::unauthorizedResponse('Từ chối truy cập. Chưa cung cấp token');
+      header('HTTP/1.1 401 Unauthorized');
+      header('Content-type: application/json');
+      echo json_encode($response['body']);
+      exit();
+  }
+}
+
+switch ($endpoint) {
   case 'product':
     $isUploadImage = isset($uri[4]) && strcasecmp($uri[4], 'upload-image') == 0;
     $page = isset($params['page']) ? $params['page'] : null;
@@ -57,7 +104,7 @@ switch ($uri[3]) {
     $key = isset($params['key']) ? $params['key'] : null;
     $reset = isset($params['reset']) ? $params['reset'] : null;
 
-    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName);
+    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName, $jwt);
     $controller->processRequest();
     break;
   case 'categories':

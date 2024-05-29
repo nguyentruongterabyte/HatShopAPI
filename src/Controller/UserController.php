@@ -12,8 +12,9 @@ class UserController {
   private $key;
   private $reset;
   private $requestName;
+  private $jwt;
 
-  public function __construct($db, $requestMethod, $mail, $key, $reset, $requestName) {
+  public function __construct($db, $requestMethod, $mail, $key, $reset, $requestName, $jwt) {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
     $this->userGateway = new UserGateway($this->db);
@@ -21,6 +22,7 @@ class UserController {
     $this->key = $key;
     $this->reset = $reset;
     $this->requestName = $requestName;
+    $this->jwt = $jwt;
   }
 
   public function processRequest() {
@@ -50,6 +52,9 @@ class UserController {
             return;
           case 'reset-password-request':
             $response = $this->resetPasswordRequest();
+            break;
+          case 'refresh-token':
+            $response = $this->refreshToken();
             break;
           default:
             $response = Utils::forbiddenResponse('Forbidden');
@@ -157,7 +162,37 @@ class UserController {
 
     unset($user['password']);
     $response = Utils::successResponse('Đăng nhập thành công');
+
+    // Tạo JWT và refresh token
+    $jwt = $this->jwt->createJWT($user['id']);
+    $refreshToken = $this->jwt->createRefreshToken($user['id']);
+
+    // Lưu refresh token vào cookies
+    setcookie('refreshToken', $refreshToken, time() + (86400 * 14), "/", "", false, true); // 14 ngày
+
+    $user['accessToken'] = $jwt;
+    $user['refreshToken'] = $refreshToken;
     $response['body']['result'] = $user;
+    return $response;
+  }
+
+  private function refreshToken() {
+    if (!isset($_POST['refreshToken'])) {
+      return Utils::unauthorizedResponse('Không có refresh token');
+    }
+
+    $refreshToken = $_POST['refreshToken'];
+    $decoded = $this->jwt->validateJWT($refreshToken);
+
+    if (!$decoded || $decoded->type !== 'refresh') {
+      return Utils::unauthorizedResponse('Refresh token không hợp lệ');
+    }
+
+    $userId = $decoded->sub;
+    $jwt = $this->jwt->createJWT($userId);
+
+    $response = Utils::successResponse('Làm mới token thành công');
+    $response['body']['result'] = $jwt;
     return $response;
   }
 

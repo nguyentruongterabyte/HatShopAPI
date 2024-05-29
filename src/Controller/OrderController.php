@@ -114,7 +114,7 @@ class OrderController
 
     if ($rowCount > 0) {
       $maxId = $this->orderGateway->maxId($input['userId']);
-      $rowCount = $this->orderDetailGateway->createOrderDetails($maxId, $input['chitiet']);
+      $rowCount = $this->orderDetailGateway->createOrderDetails($maxId, $input['chiTiet']);
       
       if ($rowCount > 1) {
         $response = Utils::successResponse('Thêm đơn hàng thành công');

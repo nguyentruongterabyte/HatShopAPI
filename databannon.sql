@@ -40,7 +40,7 @@ CREATE TABLE `chitietdonhang` (
 
 LOCK TABLES `chitietdonhang` WRITE;
 /*!40000 ALTER TABLE `chitietdonhang` DISABLE KEYS */;
-INSERT INTO `chitietdonhang` VALUES (133,167,1,117000),(133,168,26,38000),(134,167,1,117000),(135,1,3,100000),(136,165,1,500000),(136,168,1,38000),(137,167,3,117000),(138,1,2,100000),(139,167,1,117000),(139,168,26,38000),(140,167,1,117000),(140,168,26,38000),(141,167,1,117000),(142,167,1,117000),(142,168,26,38000),(143,167,1,117000),(143,168,26,38000),(144,174,3,100000),(145,174,3,100000),(146,174,4,100000),(147,147,1,117000),(147,148,1,38000),(147,151,1,120000),(147,154,1,2700000),(147,155,1,2700000),(147,156,1,2700000),(147,160,1,30000),(147,162,1,200000),(147,163,1,200000),(147,165,1,500000),(148,1,1,100000),(148,2,1,120000),(148,3,1,150000),(148,24,1,30000),(148,25,1,299000),(148,27,1,38000),(148,122,1,35000),(148,140,1,500000),(148,141,1,2700000),(148,154,1,2700000),(149,146,1,500000),(149,149,2,299000),(149,152,1,35000),(149,153,1,100000),(149,156,2,2700000),(149,157,2,2700000),(149,158,1,150000),(149,159,1,150000),(150,143,3,150000),(150,160,1,30000),(150,161,2,30000),(150,162,2,200000),(150,163,1,200000),(150,165,1,500000),(150,167,1,117000),(150,168,1,38000),(151,167,2,117000),(151,168,1,38000),(152,167,2,117000);
+INSERT INTO `chitietdonhang` VALUES (133,167,1,117000),(133,168,26,38000),(134,167,1,117000),(135,1,3,100000),(136,165,1,500000),(136,168,1,38000),(137,167,3,117000),(138,1,2,100000),(139,167,1,117000),(139,168,26,38000),(140,167,1,117000),(140,168,26,38000),(141,167,1,117000),(142,167,1,117000),(142,168,26,38000),(143,167,1,117000),(143,168,26,38000),(144,174,3,100000),(145,174,3,100000),(146,174,4,100000),(147,147,1,117000),(147,148,1,38000),(147,151,1,120000),(147,154,1,2700000),(147,155,1,2700000),(147,156,1,2700000),(147,160,1,30000),(147,162,1,200000),(147,163,1,200000),(147,165,1,500000),(148,1,1,100000),(148,2,1,120000),(148,3,1,150000),(148,24,1,30000),(148,25,1,299000),(148,27,1,38000),(148,122,1,35000),(148,140,1,500000),(148,141,1,2700000),(148,154,1,2700000),(149,146,1,500000),(149,149,2,299000),(149,152,1,35000),(149,153,1,100000),(149,156,2,2700000),(149,157,2,2700000),(149,158,1,150000),(149,159,1,150000),(150,143,3,150000),(150,160,1,30000),(150,161,2,30000),(150,162,2,200000),(150,163,1,200000),(150,165,1,500000),(150,167,1,117000),(150,168,1,38000),(151,167,2,117000),(151,168,1,38000),(152,167,2,117000),(174,167,3,117000),(175,168,1,38000);
 /*!40000 ALTER TABLE `chitietdonhang` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -128,15 +128,15 @@ DROP TABLE IF EXISTS `danhgia`;
 CREATE TABLE `danhgia` (
   `maDanhGia` int(11) NOT NULL AUTO_INCREMENT,
   `soSao` tinyint(4) NOT NULL,
-  `dungVoiMoTa` text NOT NULL DEFAULT 'Tốt',
-  `chatLuongSanPham` text NOT NULL DEFAULT 'Tuyệt vời',
+  `dungVoiMoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Tốt',
+  `chatLuongSanPham` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '\'\\\'Tuyệt vời\\\'\'',
   `nhanXet` text NOT NULL,
   `maDonHang` int(11) NOT NULL,
   `ngayDanhGia` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`maDanhGia`),
   UNIQUE KEY `maDonHang` (`maDonHang`),
   CONSTRAINT `danhgia_ibfk_1` FOREIGN KEY (`maDonHang`) REFERENCES `donhang` (`maDonHang`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,7 +145,7 @@ CREATE TABLE `danhgia` (
 
 LOCK TABLES `danhgia` WRITE;
 /*!40000 ALTER TABLE `danhgia` DISABLE KEYS */;
-INSERT INTO `danhgia` VALUES (17,5,'ok','ok','ok',141,'2024-05-19 05:26:33');
+INSERT INTO `danhgia` VALUES (88,4,'','','',141,'2024-05-29 03:39:02');
 /*!40000 ALTER TABLE `danhgia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -220,7 +220,7 @@ CREATE TABLE `donhang` (
   PRIMARY KEY (`maDonHang`),
   KEY `FK_userId` (`userId`),
   CONSTRAINT `FK_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=173 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +229,7 @@ CREATE TABLE `donhang` (
 
 LOCK TABLES `donhang` WRITE;
 /*!40000 ALTER TABLE `donhang` DISABLE KEYS */;
-INSERT INTO `donhang` VALUES (133,24,'Tây Nguyên ',1,'38000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(134,24,'Lã Xuân Oai',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-03-28 08:55:41'),(135,24,'Geography ',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-02-28 08:55:41'),(136,24,'Bà rịa Vũng tàu',2,'538000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACp_hbKERjpsBsUaFrbFHoaQ','2024-05-28 08:55:41'),(137,24,'Man thiện',3,'351000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(138,24,'Man Thiện ',2,'200000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACUgPKrdR6N89_TPxu2mEQfw','2024-04-28 08:55:41'),(139,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2023-04-28 08:55:41'),(140,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(141,24,'abc',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Đã giao','','2024-04-28 08:55:41'),(142,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 12:45:08'),(143,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 13:04:13'),(144,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','ACcBETBE9Z5GyaQvQR0V1-7Q','2024-04-28 13:26:50'),(145,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:04'),(146,24,'Chư Kbô',4,'400000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:29'),(147,24,'Ba Ria Vung Tau',10,'9305000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-05-02 10:32:03'),(148,23,'97 Man Thien Tang Nhon Phu A',10,'6672000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:57:47'),(149,23,'97 Man Thien Tang Nhon Phu B',10,'12333000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:59:42'),(150,23,'30 Tan Lap, Chu Kbo, Dak Lak',12,'1795000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 11:45:41'),(151,23,'Ba Ria Vung Tau',3,'272000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','ACeSVAyH5WNjD45L_SNbXAuQ','2024-05-02 13:08:18'),(152,23,'123 Ha Noi',2,'234000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','abc','2024-05-05 00:29:31');
+INSERT INTO `donhang` VALUES (133,24,'Tây Nguyên ',1,'38000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(134,24,'Lã Xuân Oai',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-03-28 08:55:41'),(135,24,'Geography ',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-02-28 08:55:41'),(136,24,'Bà rịa Vũng tàu',2,'538000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACp_hbKERjpsBsUaFrbFHoaQ','2024-05-28 08:55:41'),(137,24,'Man thiện',3,'351000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(138,24,'Man Thiện ',2,'200000','0948915051','nguyenthaitruong1223@gmail.com','Chờ xác nhận','ACUgPKrdR6N89_TPxu2mEQfw','2024-04-28 08:55:41'),(139,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2023-04-28 08:55:41'),(140,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 08:55:41'),(141,24,'abc',1,'117000','0948915051','nguyenthaitruong1223@gmail.com','Đã giao','','2024-04-28 08:55:41'),(142,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 12:45:08'),(143,24,'101 Man Thiện',27,'1105000','0948915051','example@gmail.com','Chờ xác nhận','','2024-04-28 13:04:13'),(144,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','ACcBETBE9Z5GyaQvQR0V1-7Q','2024-04-28 13:26:50'),(145,24,'Chư Kbô',3,'300000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:04'),(146,24,'Chư Kbô',4,'400000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-04-28 13:29:29'),(147,24,'Ba Ria Vung Tau',10,'9305000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-05-02 10:32:03'),(148,23,'97 Man Thien Tang Nhon Phu A',10,'6672000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:57:47'),(149,23,'97 Man Thien Tang Nhon Phu B',10,'12333000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 10:59:42'),(150,23,'30 Tan Lap, Chu Kbo, Dak Lak',12,'1795000','0987654321','nguyenthaitruong.entertainment@gmail.com','Chờ xác nhận','','2024-05-02 11:45:41'),(151,23,'Ba Ria Vung Tau',3,'272000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã hủy','ACeSVAyH5WNjD45L_SNbXAuQ','2024-05-02 13:08:18'),(152,23,'123 Ha Noi',2,'234000','0987654321','nguyenthaitruong.entertainment@gmail.com','Đã giao','abc','2024-05-05 00:29:31'),(174,24,'Thu Duc',3,'351000','0948915051','nguyenthaitruong1223@gmail.com','Đã giao','','2024-05-25 12:22:56'),(175,24,'Xóm Bến',1,'38000','0948915051','nguyenthaitruong1223@gmail.com','Đã hủy','','2024-05-29 15:41:22');
 /*!40000 ALTER TABLE `donhang` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -295,7 +295,7 @@ CREATE TABLE `giohang` (
 
 LOCK TABLES `giohang` WRITE;
 /*!40000 ALTER TABLE `giohang` DISABLE KEYS */;
-INSERT INTO `giohang` VALUES (167,23,1),(168,24,13);
+INSERT INTO `giohang` VALUES (165,24,2),(167,23,1);
 /*!40000 ALTER TABLE `giohang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -313,7 +313,7 @@ CREATE TABLE `hinhanhdanhgia` (
   PRIMARY KEY (`maHinhAnh`),
   KEY `maDanhGia` (`maDanhGia`),
   CONSTRAINT `hinhanhdanhgia_ibfk_1` FOREIGN KEY (`maDanhGia`) REFERENCES `danhgia` (`maDanhGia`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,8 +322,31 @@ CREATE TABLE `hinhanhdanhgia` (
 
 LOCK TABLES `hinhanhdanhgia` WRITE;
 /*!40000 ALTER TABLE `hinhanhdanhgia` DISABLE KEYS */;
-INSERT INTO `hinhanhdanhgia` VALUES (5,17,'https://storage.googleapis.com/hatshop-75393.appspot.com/6649282d8e93d.jpg?GoogleAccessId=firebase-adminsdk-fm0dm%40hatshop-75393.iam.gserviceaccount.com&Expires=2031603247&Signature=N74fBTHsqqiuLo4PSmIm%2Bh1h6RGusHbc0cYWoKswU0dWJs4DfpkzXzwh1KeIVSoXhAha1Pzg4gD4zP7ilkzFt53Jn3UZ%2BfeguQjoKqsta52rtMfXjLXdQA9i5amo%2B6Z8HxAWFFIRTgaTfDPDjMZHG1kJabOjKyvomzT00XktEmC5mHzelJTuSnC0ikJoRs7AwRPGzBmndfbt1Ms01h8yc13NGdg4s1c%2FDqUF%2FpmeQs1KDzTulfrU%2BeD4iSRwbaKzDZMFWXSR71M9LSG3uIcCwXHNyzMrH67P73zRxtMNIoDB8xnIBYgRl0kK2o68C1GWWeoDzM6sgIFefxQpCT%2BoEg%3D%3D&generation=1716070445572008');
 /*!40000 ALTER TABLE `hinhanhdanhgia` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `role` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `roleName` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES (1,'ADMIN'),(2,'CUSTOMER');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -343,7 +366,7 @@ CREATE TABLE `sanpham` (
   `trangThai` tinyint(1) DEFAULT NULL,
   `giaSanPham` int(11) DEFAULT 0,
   PRIMARY KEY (`maSanPham`)
-) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=189 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -395,8 +418,11 @@ CREATE TABLE `user` (
   `password` varchar(254) NOT NULL,
   `username` varchar(100) NOT NULL,
   `mobile` varchar(15) NOT NULL,
+  `roleId` int(11) NOT NULL DEFAULT 2,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_email` (`email`)
+  UNIQUE KEY `unique_email` (`email`),
+  KEY `role_index` (`roleId`),
+  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -406,7 +432,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (23,'nguyenthaitruong.entertainment@gmail.com','$2y$10$w7VeCglvw2vH2TIHLFG55ufdBmWB.BF43cnQfjCHIwcm7L9CwtkQq','Trưởng Chiller','0987654321'),(24,'nguyenthaitruong1223@gmail.com','$2y$10$TWgdtiyCQL694gIY0OQVa.3SXUlzYnBaftoxDDo.3f4SZbtJlyJ42','Nguyễn Thái Trưởng','0948915051'),(25,'nguyenthaitruong12233@gmail.com','$2y$10$RuJzs68D6FFYDZJIwlM42ekfdnnehd9TgjrsMuYbvhAv.0dB.C5qC','Nguyễn Thái Trưởng','0948915051'),(26,'phamngocbao2104@gmail.com','$2y$10$Gla1EMMo0zDaEv8/ijgTduoLj7vyD7aQ4SK0bTb1CRhSEDuCTvcTa','Bảo Phạm','0132659475'),(28,'n20dccn083@student.ptithcm.edu.vn','$2y$10$b66ZUa57k.meWbPP5IiXHuo2idgN31LkiYDhG5zgpC0d.nm4DDVh.','Nguyen Thai Truong','0948915051'),(29,'nguyenthaitruong.entertainment1@gmail.com','$2y$10$92fEaJmR6C7YtSB.WwopYuJpZYG6EaQCw0gz2Q8trjkZts3zRtH92','Nguyễn Trưởng','0948915051');
+INSERT INTO `user` VALUES (23,'nguyenthaitruong.entertainment@gmail.com','$2y$10$w7VeCglvw2vH2TIHLFG55ufdBmWB.BF43cnQfjCHIwcm7L9CwtkQq','Trưởng Chiller','0987654321',2),(24,'nguyenthaitruong1223@gmail.com','$2y$10$TWgdtiyCQL694gIY0OQVa.3SXUlzYnBaftoxDDo.3f4SZbtJlyJ42','Nguyễn Thái Trưởng','0948915051',2),(25,'nguyenthaitruong12233@gmail.com','$2y$10$RuJzs68D6FFYDZJIwlM42ekfdnnehd9TgjrsMuYbvhAv.0dB.C5qC','Nguyễn Thái Trưởng','0948915051',2),(26,'phamngocbao2104@gmail.com','$2y$10$Gla1EMMo0zDaEv8/ijgTduoLj7vyD7aQ4SK0bTb1CRhSEDuCTvcTa','Bảo Phạm','0132659475',2),(28,'n20dccn083@student.ptithcm.edu.vn','$2y$10$b66ZUa57k.meWbPP5IiXHuo2idgN31LkiYDhG5zgpC0d.nm4DDVh.','Nguyen Thai Truong','0948915051',2),(29,'nguyenthaitruong.entertainment1@gmail.com','$2y$10$92fEaJmR6C7YtSB.WwopYuJpZYG6EaQCw0gz2Q8trjkZts3zRtH92','Nguyễn Trưởng','0948915051',2);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,7 +455,8 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `email`,
  1 AS `trangThai`,
  1 AS `ngayTao`,
- 1 AS `hasToken`*/;
+ 1 AS `hasToken`,
+ 1 AS `daDanhGia`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -724,6 +751,30 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `SP_GET_PRODUCT_RATING` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_GET_PRODUCT_RATING`(IN productId INT)
+BEGIN
+	select u.email, u.username, d.*
+    from danhgia d
+    join chitietdonhang c on d.maDonHang = c.maDonHang
+    join donhang dh on c.maDonHang = dh.maDonHang
+    join `user` u on u.id = dh.userId
+    where c.maSanPham = productId;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `SP_YEAR_REVENUE` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -769,7 +820,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `v_orders` AS select `dh`.`maDonHang` AS `maDonHang`,`dh`.`userId` AS `userId`,`u`.`username` AS `username`,`dh`.`diaChi` AS `diaChi`,`dh`.`soLuong` AS `soLuong`,`dh`.`tongTien` AS `tongTien`,`dh`.`soDienThoai` AS `soDienThoai`,`dh`.`email` AS `email`,`dh`.`trangThai` AS `trangThai`,`dh`.`ngayTao` AS `ngayTao`,case when `dh`.`token` <> '' then 1 else 0 end AS `hasToken` from (`donhang` `dh` join `user` `u`) where `dh`.`userId` = `u`.`id` order by `dh`.`maDonHang` desc */;
+/*!50001 VIEW `v_orders` AS select `dh`.`maDonHang` AS `maDonHang`,`dh`.`userId` AS `userId`,`u`.`username` AS `username`,`dh`.`diaChi` AS `diaChi`,`dh`.`soLuong` AS `soLuong`,`dh`.`tongTien` AS `tongTien`,`dh`.`soDienThoai` AS `soDienThoai`,`dh`.`email` AS `email`,`dh`.`trangThai` AS `trangThai`,`dh`.`ngayTao` AS `ngayTao`,case when `dh`.`token` <> '' then 1 else 0 end AS `hasToken`,case when `dg`.`maDonHang` is not null then 1 else 0 end AS `daDanhGia` from ((`donhang` `dh` join `user` `u` on(`dh`.`userId` = `u`.`id`)) left join `danhgia` `dg` on(`dh`.`maDonHang` = `dg`.`maDonHang`)) order by `dh`.`maDonHang` desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -783,4 +834,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-19 12:38:28
+-- Dump completed on 2024-05-29 22:57:47
