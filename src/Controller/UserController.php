@@ -141,40 +141,40 @@ class UserController {
     }
     return $response;
   }
-  private function login() {
-    $input = $_POST;
-    if (!isset($input['email']) || !$input['email']) {
-      return Utils::unprocessableEntityResponse('Chưa cung cấp email');
+    private function login() {
+      $input = $_POST;
+      if (!isset($input['email']) || !$input['email']) {
+        return Utils::unprocessableEntityResponse('Chưa cung cấp email');
+      }
+
+      if (!isset($input['password']) || !$input['password']) {
+        return Utils::unprocessableEntityResponse('Chưa cung cấp mật khẩu');
+      }
+
+      $user = $this->userGateway->findByEmail($input['email']);
+      if (!$user) {
+        return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
+      }
+
+      if (!password_verify($input['password'], $user['password'])) {
+        return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
+      }
+
+      unset($user['password']);
+      $response = Utils::successResponse('Đăng nhập thành công');
+
+      // Tạo JWT và refresh token
+      $jwt = $this->jwt->createJWT($user['id']);
+      $refreshToken = $this->jwt->createRefreshToken($user['id']);
+
+      // Lưu refresh token vào cookies
+      setcookie('refreshToken', $refreshToken, time() + (86400 * 14), "/", "", false, true); // 14 ngày
+
+      $user['accessToken'] = $jwt;
+      $user['refreshToken'] = $refreshToken;
+      $response['body']['result'] = $user;
+      return $response;
     }
-
-    if (!isset($input['password']) || !$input['password']) {
-      return Utils::unprocessableEntityResponse('Chưa cung cấp mật khẩu');
-    }
-
-    $user = $this->userGateway->findByEmail($input['email']);
-    if (!$user) {
-      return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
-    }
-
-    if (!password_verify($input['password'], $user['password'])) {
-      return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
-    }
-
-    unset($user['password']);
-    $response = Utils::successResponse('Đăng nhập thành công');
-
-    // Tạo JWT và refresh token
-    $jwt = $this->jwt->createJWT($user['id']);
-    $refreshToken = $this->jwt->createRefreshToken($user['id']);
-
-    // Lưu refresh token vào cookies
-    setcookie('refreshToken', $refreshToken, time() + (86400 * 14), "/", "", false, true); // 14 ngày
-
-    $user['accessToken'] = $jwt;
-    $user['refreshToken'] = $refreshToken;
-    $response['body']['result'] = $user;
-    return $response;
-  }
 
   private function refreshToken() {
     if (!isset($_POST['refreshToken'])) {
