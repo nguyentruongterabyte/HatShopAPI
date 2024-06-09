@@ -46,11 +46,11 @@ $requestName = isset($uri[4]) ? $uri[4] : null;
 $requiresAuth = false;
 
 $protectedEndpoints = [
-  'product' => ['page'],
-  'order' => [],
-  'cart' => [],
-  'rating' => [],
-  'bill' => []
+  // 'product' => ['page'],
+  // 'order' => [],
+  // 'cart' => [],
+  // 'rating' => [],
+  // 'bill' => []
 ];
 
 
