@@ -164,12 +164,11 @@ class UserController {
       $response = Utils::successResponse('Đăng nhập thành công');
 
       // Tạo JWT và refresh token
-      $jwt = $this->jwt->createJWT($user['id']);
+      $jwt = $this->jwt->createJWT($user['id'], $user['roleId']);
       $refreshToken = $this->jwt->createRefreshToken($user['id']);
 
       // Lưu refresh token vào cookies
       setcookie('refreshToken', $refreshToken, time() + (86400 * 14), "/", "", false, true); // 14 ngày
-
       $user['accessToken'] = $jwt;
       $user['refreshToken'] = $refreshToken;
       $response['body']['result'] = $user;
@@ -189,10 +188,15 @@ class UserController {
     }
 
     $userId = $decoded->sub;
-    $jwt = $this->jwt->createJWT($userId);
+    $user = $this->userGateway->find($userId);
+    if (!$user) {
+      return Utils::forbiddenResponse('Refresh token không hợp lệ');
+    }
+    $jwt = $this->jwt->createJWT($userId, $user['roleId']);
 
     $response = Utils::successResponse('Làm mới token thành công');
     $response['body']['result'] = $jwt;
+    $response['body']['role'] = $user['roleId'];
     return $response;
   }
 

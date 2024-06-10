@@ -12,13 +12,14 @@ class JWT
     $this->secretKey = $secretKey;
   }
 
-  public function createJWT($userId, $expirationTime = 3600)
+  public function createJWT($userId, $role, $expirationTime = 3600)
   {
     $issuedAt = time();
     $payload = [
       'iat' => $issuedAt,
       'exp' => $issuedAt + $expirationTime,
-      'sub' => $userId
+      'sub' => $userId,
+      'role' => $role
     ];
 
     return FirebaseJWT::encode($payload, $this->secretKey, 'HS256');
