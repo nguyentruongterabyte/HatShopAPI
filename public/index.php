@@ -101,10 +101,11 @@ switch ($endpoint) {
     $controller->processRequest();
     break;
   case 'user':
+    $userId = isset($params['userId']) ? $params['userId'] : null;
     $key = isset($params['key']) ? $params['key'] : null;
     $reset = isset($params['reset']) ? $params['reset'] : null;
 
-    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName, $jwt);
+    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset,$userId, $requestName, $jwt);
     $controller->processRequest();
     break;
   case 'categories':

@@ -11,16 +11,18 @@ class UserController {
   private $mail;
   private $key;
   private $reset;
+  private $userId;
   private $requestName;
   private $jwt;
 
-  public function __construct($db, $requestMethod, $mail, $key, $reset, $requestName, $jwt) {
+  public function __construct($db, $requestMethod, $mail, $key, $reset, $userId, $requestName, $jwt) {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
     $this->userGateway = new UserGateway($this->db);
     $this->mail = $mail;
     $this->key = $key;
     $this->reset = $reset;
+    $this->userId = $userId;
     $this->requestName = $requestName;
     $this->jwt = $jwt;
   }
@@ -35,6 +37,8 @@ class UserController {
           header('Content-Type: text/html');
           $response = $this->resetPassword($this->key, $this->reset);
           return;
+        } else if ($this->userId) {
+          $response = $this->getUser($this->userId);
         } else {
           $response = Utils::forbiddenResponse("Forbidden");
         }
@@ -112,6 +116,15 @@ class UserController {
       echo 'Không được resubmit lại biểu mẫu này';
     }
     
+  }
+
+
+  private function getUser($userId) {
+    $result = $this->userGateway->find($userId);
+    $response = Utils::successResponse('Thành công');
+    unset($result['password']);
+    $response['body']['result'] = $result;
+    return $response; 
   }
 
   private function getAll() {
