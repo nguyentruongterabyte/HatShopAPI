@@ -13,16 +13,23 @@ use Src\Controller\UserController;
 use Src\System\JWT;
 use Src\Utils\Utils;
 
-header("Access-Control-Allow-Origin: *");
+// CORS Headers
+header("Access-Control-Allow-Origin: http://localhost:5173"); // Allow only your client origin
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
+header("Access-Control-Allow-Methods: OPTIONS, GET, POST, PUT, DELETE");
 header("Access-Control-Max-Age: 3600");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, withCredentials");
+header("Access-Control-Allow-Credentials: true");
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header('HTTP/1.1 200 OK');
+    exit();
+}
 
 // JWT
 $secretKey = getenv("SECRET_KEY") ?? '3fN8@#sjk12#FJeio1@!$jifD;fi13Rjkd81';
 $jwt = new JWT($secretKey);
-
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 // Extracting the query string from the URL
@@ -46,13 +53,14 @@ $requestName = isset($uri[4]) ? $uri[4] : null;
 $requiresAuth = false;
 
 $protectedEndpoints = [
-  // 'product' => ['page'],
-  // 'order' => [],
-  // 'cart' => [],
-  // 'rating' => [],
-  // 'bill' => []
-];
 
+  'product' => [],
+  'order' => [],
+  'cart' => [],
+  'rating' => [],
+  'bill' => [],
+  'report' => []
+];
 
 if (isset($protectedEndpoints[$endpoint])) {
   if (count($protectedEndpoints[$endpoint]) === 0 || (isset($uri[4]) && in_array($uri[4], $protectedEndpoints[$endpoint]))) {
@@ -72,13 +80,12 @@ if ($requiresAuth) {
       echo json_encode($response['body']);
       exit();
     } 
-
   } else {
     $response = Utils::unauthorizedResponse('Từ chối truy cập. Chưa cung cấp token');
-      header('HTTP/1.1 401 Unauthorized');
-      header('Content-type: application/json');
-      echo json_encode($response['body']);
-      exit();
+    header('HTTP/1.1 401 Unauthorized');
+    header('Content-type: application/json');
+    echo json_encode($response['body']);
+    exit();
   }
 }
 
@@ -101,10 +108,11 @@ switch ($endpoint) {
     $controller->processRequest();
     break;
   case 'user':
+    $userId = isset($params['userId']) ? $params['userId'] : null;
     $key = isset($params['key']) ? $params['key'] : null;
     $reset = isset($params['reset']) ? $params['reset'] : null;
 
-    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset, $requestName, $jwt);
+    $controller = new UserController($dbConnection, $requestMethod, $mail, $key, $reset,$userId, $requestName, $jwt);
     $controller->processRequest();
     break;
   case 'categories':
@@ -141,4 +149,3 @@ switch ($endpoint) {
     header('HTTP/1.1 404 Not Found');
     break;
 }
-

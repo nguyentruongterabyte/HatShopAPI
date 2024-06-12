@@ -11,16 +11,18 @@ class UserController {
   private $mail;
   private $key;
   private $reset;
+  private $userId;
   private $requestName;
   private $jwt;
 
-  public function __construct($db, $requestMethod, $mail, $key, $reset, $requestName, $jwt) {
+  public function __construct($db, $requestMethod, $mail, $key, $reset, $userId, $requestName, $jwt) {
     $this->db = $db;
     $this->requestMethod = $requestMethod;
     $this->userGateway = new UserGateway($this->db);
     $this->mail = $mail;
     $this->key = $key;
     $this->reset = $reset;
+    $this->userId = $userId;
     $this->requestName = $requestName;
     $this->jwt = $jwt;
   }
@@ -35,6 +37,8 @@ class UserController {
           header('Content-Type: text/html');
           $response = $this->resetPassword($this->key, $this->reset);
           return;
+        } else if ($this->userId) {
+          $response = $this->getUser($this->userId);
         } else {
           $response = Utils::forbiddenResponse("Forbidden");
         }
@@ -114,6 +118,15 @@ class UserController {
     
   }
 
+
+  private function getUser($userId) {
+    $result = $this->userGateway->find($userId);
+    $response = Utils::successResponse('Thành công');
+    unset($result['password']);
+    $response['body']['result'] = $result;
+    return $response; 
+  }
+
   private function getAll() {
     $result = $this->userGateway->getAll();
     $response = Utils::successResponse('Thành công');
@@ -141,40 +154,39 @@ class UserController {
     }
     return $response;
   }
-  private function login() {
-    $input = $_POST;
-    if (!isset($input['email']) || !$input['email']) {
-      return Utils::unprocessableEntityResponse('Chưa cung cấp email');
+    private function login() {
+      $input = $_POST;
+      if (!isset($input['email']) || !$input['email']) {
+        return Utils::unprocessableEntityResponse('Chưa cung cấp email');
+      }
+
+      if (!isset($input['password']) || !$input['password']) {
+        return Utils::unprocessableEntityResponse('Chưa cung cấp mật khẩu');
+      }
+
+      $user = $this->userGateway->findByEmail($input['email']);
+      if (!$user) {
+        return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
+      }
+
+      if (!password_verify($input['password'], $user['password'])) {
+        return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
+      }
+
+      unset($user['password']);
+      $response = Utils::successResponse('Đăng nhập thành công');
+
+      // Tạo JWT và refresh token
+      $jwt = $this->jwt->createJWT($user['id'], $user['roleId']);
+      $refreshToken = $this->jwt->createRefreshToken($user['id']);
+
+      // Lưu refresh token vào cookies
+      setcookie('refreshToken', $refreshToken, time() + (86400 * 14), "/", "", false, true); // 14 ngày
+      $user['accessToken'] = $jwt;
+      $user['refreshToken'] = $refreshToken;
+      $response['body']['result'] = $user;
+      return $response;
     }
-
-    if (!isset($input['password']) || !$input['password']) {
-      return Utils::unprocessableEntityResponse('Chưa cung cấp mật khẩu');
-    }
-
-    $user = $this->userGateway->findByEmail($input['email']);
-    if (!$user) {
-      return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
-    }
-
-    if (!password_verify($input['password'], $user['password'])) {
-      return Utils::unauthorizedResponse('Email hoặc mật khẩu chưa đúng');
-    }
-
-    unset($user['password']);
-    $response = Utils::successResponse('Đăng nhập thành công');
-
-    // Tạo JWT và refresh token
-    $jwt = $this->jwt->createJWT($user['id']);
-    $refreshToken = $this->jwt->createRefreshToken($user['id']);
-
-    // Lưu refresh token vào cookies
-    setcookie('refreshToken', $refreshToken, time() + (86400 * 14), "/", "", false, true); // 14 ngày
-
-    $user['accessToken'] = $jwt;
-    $user['refreshToken'] = $refreshToken;
-    $response['body']['result'] = $user;
-    return $response;
-  }
 
   private function refreshToken() {
     if (!isset($_POST['refreshToken'])) {
@@ -189,10 +201,15 @@ class UserController {
     }
 
     $userId = $decoded->sub;
-    $jwt = $this->jwt->createJWT($userId);
+    $user = $this->userGateway->find($userId);
+    if (!$user) {
+      return Utils::forbiddenResponse('Refresh token không hợp lệ');
+    }
+    $jwt = $this->jwt->createJWT($userId, $user['roleId']);
 
     $response = Utils::successResponse('Làm mới token thành công');
     $response['body']['result'] = $jwt;
+    $response['body']['role'] = $user['roleId'];
     return $response;
   }
 
