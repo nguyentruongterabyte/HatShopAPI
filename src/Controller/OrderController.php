@@ -148,7 +148,7 @@ class OrderController
     }
 
     if (strcmp($order['trangThai'], 'Đã hủy') == 0) {
-      return Utils::forbiddenResponse('Đơn hàng đã hủy không thể hủy lần nữa');
+      return Utils::forbiddenResponse('Đơn hàng đã hủy không thể thao tác nữa');
     }
 
     $statusArray = ['Chờ xác nhận', 'Đang giao', 'Đã hủy', 'Đã giao'];
