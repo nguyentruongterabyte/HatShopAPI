@@ -112,17 +112,13 @@ class OrderController
     }
     $rowCount = $this->orderGateway->create($input);
 
+   
     if ($rowCount > 0) {
       $maxId = $this->orderGateway->maxId($input['userId']);
       $rowCount = $this->orderDetailGateway->createOrderDetails($maxId, $input['chiTiet']);
       
-      if ($rowCount > 1) {
         $response = Utils::successResponse('Thêm đơn hàng thành công');
         $response['body']['result'] = $maxId;
-      } else {
-        $this->orderGateway->delete($maxId);
-        $response = Utils::badRequestResponse('Lỗi khi thêm chi tiết đơn hàng. Đơn hàng chưa được tạo');
-      }
 
     } else {
       $response = Utils::badRequestResponse("Không thể tạo mới đơn hàng");

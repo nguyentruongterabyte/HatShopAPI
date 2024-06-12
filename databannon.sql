@@ -128,8 +128,8 @@ DROP TABLE IF EXISTS `danhgia`;
 CREATE TABLE `danhgia` (
   `maDanhGia` int(11) NOT NULL AUTO_INCREMENT,
   `soSao` tinyint(4) NOT NULL,
-  `dungVoiMoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Tốt',
-  `chatLuongSanPham` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '\'\\\'Tuyệt vời\\\'\'',
+  `dungVoiMoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
+  `chatLuongSanPham` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
   `nhanXet` text NOT NULL,
   `maDonHang` int(11) NOT NULL,
   `ngayDanhGia` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -834,4 +834,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-29 22:57:47
+-- Dump completed on 2024-06-04 21:22:43

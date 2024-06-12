@@ -109,7 +109,7 @@ class ProductController {
     $id = isset($input['maSanPham']) ? $input['maSanPham'] : -1;
     $product = (object)[];
 
-    if ($id != -1) {
+    
       $product = $this->productGateway->find($id);
       if (!$product) {
         return Utils::notFoundResponse("Không có thông tin sản phẩm");
@@ -119,7 +119,7 @@ class ProductController {
 
         $this->imageFactory->delete($imageURL);
       } 
-    }
+    
 
     // Tải hình ảnh mới lên firebase
     if (isset($_FILES['file']) && $_FILES['file']['tmp_name']) {

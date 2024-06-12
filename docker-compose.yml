@@ -1,0 +1,21 @@
+version: "2"
+services:
+  web:
+    image: php_apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html
+  db:
+    image: mysql:8.0.35
+    environment:
+      MYSQL_DB_CONNECTION: 192.168.1.6:3306
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: databannon
+      MYSQL_USER: phuc
+      MYSQL_PASSWORD: Phuc123@
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
