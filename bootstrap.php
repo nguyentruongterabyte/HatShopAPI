@@ -9,7 +9,7 @@ use Src\System\SMTPEmailService;
 error_reporting(E_ALL & ~E_DEPRECATED);
 ini_set('display_errors', 1);
 
-$dotenv = new DotEnv(__DIR__);
+$dotenv = new Dotenv(__DIR__);
 $dotenv -> load();
 
 $dbConnection = (new DatabaseConnector())->getConnection();
