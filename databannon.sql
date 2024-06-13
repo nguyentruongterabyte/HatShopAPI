@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: databannon
+-- Host: localhost    Database: databannon
 -- ------------------------------------------------------
--- Server version	5.5.5-10.4.27-MariaDB
+-- Server version	8.0.37
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -23,15 +23,15 @@ DROP TABLE IF EXISTS `chitietdonhang`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chitietdonhang` (
-  `maDonHang` int(11) NOT NULL,
-  `maSanPham` int(11) NOT NULL,
-  `soLuong` int(11) NOT NULL,
-  `giaSanPham` int(11) NOT NULL DEFAULT 20000,
+  `maDonHang` int NOT NULL,
+  `maSanPham` int NOT NULL,
+  `soLuong` int NOT NULL,
+  `giaSanPham` int NOT NULL DEFAULT '20000',
   PRIMARY KEY (`maDonHang`,`maSanPham`),
   KEY `FK_maSanPham` (`maSanPham`),
   CONSTRAINT `FK_maDonHang` FOREIGN KEY (`maDonHang`) REFERENCES `donhang` (`maDonHang`) ON DELETE CASCADE,
   CONSTRAINT `FK_maSanPham` FOREIGN KEY (`maSanPham`) REFERENCES `sanpham` (`maSanPham`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,10 +52,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger before_insert_chitietdonhang
-before insert on chitietdonhang
-for each row
-begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `before_insert_chitietdonhang` BEFORE INSERT ON `chitietdonhang` FOR EACH ROW begin
 	declare v_giaSanPham int(11);
     
     -- Retrieve the giaSanPham from the sanpham table
@@ -80,10 +77,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger after_insert_chitietdonhang
-after insert on chitietdonhang
-for each row
-begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_insert_chitietdonhang` AFTER INSERT ON `chitietdonhang` FOR EACH ROW begin
 	-- Update the quantity of sanpham table
     update sanpham 
     set soLuong = sanPham.soLuong - new.soLuong
@@ -103,10 +97,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger after_delete_chitietdonhang
-after delete on `chitietdonhang`
-for each row
-begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `after_delete_chitietdonhang` AFTER DELETE ON `chitietdonhang` FOR EACH ROW begin
 	-- update the quantity in sanpham table
     update sanpham 
     set sanpham.soLuong = sanpham.soLuong + old.soLuong
@@ -126,17 +117,17 @@ DROP TABLE IF EXISTS `danhgia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `danhgia` (
-  `maDanhGia` int(11) NOT NULL AUTO_INCREMENT,
-  `soSao` tinyint(4) NOT NULL,
-  `dungVoiMoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
-  `chatLuongSanPham` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL ,
-  `nhanXet` text NOT NULL,
-  `maDonHang` int(11) NOT NULL,
-  `ngayDanhGia` timestamp NOT NULL DEFAULT current_timestamp(),
+  `maDanhGia` int NOT NULL AUTO_INCREMENT,
+  `soSao` tinyint NOT NULL,
+  `dungVoiMoTa` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `chatLuongSanPham` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nhanXet` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `maDonHang` int NOT NULL,
+  `ngayDanhGia` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`maDanhGia`),
   UNIQUE KEY `maDonHang` (`maDonHang`),
   CONSTRAINT `danhgia_ibfk_1` FOREIGN KEY (`maDonHang`) REFERENCES `donhang` (`maDonHang`)
-) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,11 +148,11 @@ DROP TABLE IF EXISTS `danhmuc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `danhmuc` (
-  `maDanhMuc` int(11) NOT NULL AUTO_INCREMENT,
-  `tenDanhMuc` varchar(255) NOT NULL,
-  `hinhAnh` text NOT NULL,
+  `maDanhMuc` int NOT NULL AUTO_INCREMENT,
+  `tenDanhMuc` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `hinhAnh` text COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`maDanhMuc`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,11 +173,11 @@ DROP TABLE IF EXISTS `danhmucquanly`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `danhmucquanly` (
-  `maDanhMuc` int(11) NOT NULL AUTO_INCREMENT,
-  `tenDanhMuc` varchar(255) NOT NULL,
-  `hinhAnh` text NOT NULL,
+  `maDanhMuc` int NOT NULL AUTO_INCREMENT,
+  `tenDanhMuc` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `hinhAnh` text COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`maDanhMuc`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,20 +198,20 @@ DROP TABLE IF EXISTS `donhang`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `donhang` (
-  `maDonHang` int(11) NOT NULL AUTO_INCREMENT,
-  `userId` int(11) NOT NULL,
-  `diaChi` text NOT NULL,
-  `soLuong` int(11) NOT NULL,
-  `tongTien` varchar(15) NOT NULL,
-  `soDienThoai` varchar(15) NOT NULL,
-  `email` varchar(254) NOT NULL,
-  `trangThai` varchar(100) NOT NULL DEFAULT 'Chờ xác nhận',
-  `token` text NOT NULL,
-  `ngayTao` timestamp NOT NULL DEFAULT current_timestamp(),
+  `maDonHang` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL,
+  `diaChi` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `soLuong` int NOT NULL,
+  `tongTien` varchar(15) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `soDienThoai` varchar(15) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `email` varchar(254) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `trangThai` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'Chờ xác nhận',
+  `token` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `ngayTao` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`maDonHang`),
   KEY `FK_userId` (`userId`),
   CONSTRAINT `FK_userId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -241,10 +232,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 trigger before_delete_donhang
-before delete on `donhang`
-for each row
-begin
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `before_delete_donhang` BEFORE DELETE ON `donhang` FOR EACH ROW begin
 	declare done int default false;
     declare v_maSanPham int;
     declare v_soLuong int;
@@ -280,14 +268,14 @@ DROP TABLE IF EXISTS `giohang`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `giohang` (
-  `maSanPham` int(11) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `soLuong` int(11) NOT NULL,
+  `maSanPham` int NOT NULL,
+  `userId` int NOT NULL,
+  `soLuong` int NOT NULL,
   PRIMARY KEY (`maSanPham`,`userId`),
   KEY `giohang_ibfk_2` (`userId`),
   CONSTRAINT `giohang_ibfk_1` FOREIGN KEY (`maSanPham`) REFERENCES `sanpham` (`maSanPham`),
   CONSTRAINT `giohang_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,13 +296,13 @@ DROP TABLE IF EXISTS `hinhanhdanhgia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `hinhanhdanhgia` (
-  `maHinhAnh` int(11) NOT NULL AUTO_INCREMENT,
-  `maDanhGia` int(11) NOT NULL,
-  `hinhAnhURL` text NOT NULL,
+  `maHinhAnh` int NOT NULL AUTO_INCREMENT,
+  `maDanhGia` int NOT NULL,
+  `hinhAnhURL` text COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`maHinhAnh`),
   KEY `maDanhGia` (`maDanhGia`),
   CONSTRAINT `hinhanhdanhgia_ibfk_1` FOREIGN KEY (`maDanhGia`) REFERENCES `danhgia` (`maDanhGia`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -334,10 +322,10 @@ DROP TABLE IF EXISTS `role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `role` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `roleName` varchar(10) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `roleName` varchar(10) COLLATE utf8mb3_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,17 +346,17 @@ DROP TABLE IF EXISTS `sanpham`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `sanpham` (
-  `maSanPham` int(11) NOT NULL AUTO_INCREMENT,
-  `tenSanPham` varchar(255) NOT NULL,
-  `moTa` text NOT NULL,
-  `soLuong` int(11) DEFAULT NULL,
-  `gioiTinh` varchar(20) DEFAULT NULL,
-  `mauSac` varchar(30) DEFAULT NULL,
-  `hinhAnh` text DEFAULT NULL,
+  `maSanPham` int NOT NULL AUTO_INCREMENT,
+  `tenSanPham` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `moTa` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `soLuong` int DEFAULT NULL,
+  `gioiTinh` varchar(20) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `mauSac` varchar(30) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `hinhAnh` text COLLATE utf8mb3_unicode_ci,
   `trangThai` tinyint(1) DEFAULT NULL,
-  `giaSanPham` int(11) DEFAULT 0,
+  `giaSanPham` int DEFAULT '0',
   PRIMARY KEY (`maSanPham`)
-) ENGINE=InnoDB AUTO_INCREMENT=189 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=189 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -389,12 +377,12 @@ DROP TABLE IF EXISTS `toado`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `toado` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `kinhDo` double NOT NULL DEFAULT 106.78736,
-  `viDo` double NOT NULL DEFAULT 10.84897,
-  `tenViTri` varchar(255) NOT NULL DEFAULT 'Hat Shop',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `kinhDo` double NOT NULL DEFAULT '106.78736',
+  `viDo` double NOT NULL DEFAULT '10.84897',
+  `tenViTri` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'Hat Shop',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -415,17 +403,17 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(254) NOT NULL,
-  `password` varchar(254) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `mobile` varchar(15) NOT NULL,
-  `roleId` int(11) NOT NULL DEFAULT 2,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(254) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `password` varchar(254) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `username` varchar(100) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `mobile` varchar(15) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `roleId` int NOT NULL DEFAULT '2',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_email` (`email`),
   KEY `role_index` (`roleId`),
   CONSTRAINT `user_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -822,7 +810,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `v_orders` AS select `dh`.`maDonHang` AS `maDonHang`,`dh`.`userId` AS `userId`,`u`.`username` AS `username`,`dh`.`diaChi` AS `diaChi`,`dh`.`soLuong` AS `soLuong`,`dh`.`tongTien` AS `tongTien`,`dh`.`soDienThoai` AS `soDienThoai`,`dh`.`email` AS `email`,`dh`.`trangThai` AS `trangThai`,`dh`.`ngayTao` AS `ngayTao`,case when `dh`.`token` <> '' then 1 else 0 end AS `hasToken`,case when `dg`.`maDonHang` is not null then 1 else 0 end AS `daDanhGia` from ((`donhang` `dh` join `user` `u` on(`dh`.`userId` = `u`.`id`)) left join `danhgia` `dg` on(`dh`.`maDonHang` = `dg`.`maDonHang`)) order by `dh`.`maDonHang` desc */;
+/*!50001 VIEW `v_orders` AS select `dh`.`maDonHang` AS `maDonHang`,`dh`.`userId` AS `userId`,`u`.`username` AS `username`,`dh`.`diaChi` AS `diaChi`,`dh`.`soLuong` AS `soLuong`,`dh`.`tongTien` AS `tongTien`,`dh`.`soDienThoai` AS `soDienThoai`,`dh`.`email` AS `email`,`dh`.`trangThai` AS `trangThai`,`dh`.`ngayTao` AS `ngayTao`,(case when (`dh`.`token` <> '') then 1 else 0 end) AS `hasToken`,(case when (`dg`.`maDonHang` is not null) then 1 else 0 end) AS `daDanhGia` from ((`donhang` `dh` join `user` `u` on((`dh`.`userId` = `u`.`id`))) left join `danhgia` `dg` on((`dh`.`maDonHang` = `dg`.`maDonHang`))) order by `dh`.`maDonHang` desc */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -836,4 +824,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-04 21:22:43
+-- Dump completed on 2024-06-13 19:27:34
