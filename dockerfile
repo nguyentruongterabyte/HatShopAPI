@@ -1,31 +1,35 @@
-# Sử dụng PHP image chính thức với Apache
+# Use PHP image with Apache
 FROM php:8.1-apache
 
-# Cài đặt các tiện ích cần thiết cho Composer
+# Install necessary tools
 RUN apt-get update && apt-get install -y \
   git \
   unzip \
   zip
 
-# Cài đặt các extension cần thiết cho PHP
+# Install PHP extensions
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Cài đặt Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Đặt thư mục làm việc là /var/www/html
+# Set working directory
 WORKDIR /var/www/html
 
-# Sao chép file composer.json và cài đặt các dependencies
+# Copy composer.json and install dependencies
 COPY composer.json ./
+COPY composer.lock ./
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install
 
-# Sao chép toàn bộ mã nguồn vào thư mục làm việc
+# Copy entire source code to working directory
 COPY . .
 
-# Expose cổng 8000
+# Generate autoload files
+RUN composer dump-autoload --optimize
+
+# Expose port 8000
 EXPOSE 8000
 
-# Khởi chạy server PHP
+# Start PHP server
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
