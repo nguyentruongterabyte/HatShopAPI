@@ -1,21 +1,42 @@
-version: "2"
+version: '3.8'
+
 services:
   web:
-    image: php_apache
+    build: .
     ports:
-      - "8080:80"
+      - "8000:8000"
     volumes:
-      - ./public:/var/www/html
-  db:
-    image: mysql:8.0.35
+      - .:/var/www/html
+    depends_on:
+      - db
     environment:
-      MYSQL_DB_CONNECTION: 192.168.1.6:3306
-      MYSQL_ROOT_PASSWORD: root123
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: databannon
+      DB_USERNAME: root
+      DB_PASSWORD: 123
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
       MYSQL_DATABASE: databannon
-      MYSQL_USER: phuc
-      MYSQL_PASSWORD: Phuc123@
+    ports:
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./databannon.sql:/docker-entrypoint-initdb.d/databannon.sql
+    command: --default-authentication-plugin=mysql_native_password
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: 123
 
 volumes:
   db_data:

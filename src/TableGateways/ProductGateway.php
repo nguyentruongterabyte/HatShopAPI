@@ -84,18 +84,19 @@ class ProductGateway extends AbstractTableGateways{
    * @return int
    */
   public function create(Array $input) {
-    $statement = "INSERT INTO sanpham (tenSanPham, soLuong, gioiTinh, mauSac, hinhAnh, giaSanPham) 
-                  VALUES (:tenSanPham, :soLuong, :gioiTinh, :mauSac, :hinhAnh, :giaSanPham)
+    $statement = "INSERT INTO sanpham (tenSanPham, soLuong, gioiTinh, mauSac, hinhAnh, giaSanPham, moTa) 
+                  VALUES (:tenSanPham, :soLuong, :gioiTinh, :mauSac, :hinhAnh, :giaSanPham, :moTa)
                  ";
     try {
       $statement = $this->db->prepare($statement);
       $statement->execute(array(
         'tenSanPham' => $input['tenSanPham'] ?? null,
-        'soLuong' => $input['soLuong'] ?? null,
-        'gioiTinh' => $input['gioiTinh'] ?? null,
-        'mauSac' => $input['mauSac'] ?? null,
-        'hinhAnh' => $input['hinhAnh'] ?? null,
-        'giaSanPham'=> $input['giaSanPham'] ?? null
+        'soLuong' => $input['soLuong'] ?? 10,
+        'gioiTinh' => $input['gioiTinh'] ?? 'Nam',
+        'mauSac' => $input['mauSac'] ?? 'Đen',
+        'hinhAnh' => $input['hinhAnh'] ?? '',
+        'giaSanPham'=> $input['giaSanPham'] ?? '100000',
+        'moTa' => $input['moTa'] ?? ''
       ));
       return $statement->rowCount();
     } catch (\PDOException $e) {
@@ -120,19 +121,21 @@ class ProductGateway extends AbstractTableGateways{
                       gioiTinh = :gioiTinh, 
                       mauSac = :mauSac, 
                       hinhAnh = :hinhAnh, 
-                      giaSanPham = :giaSanPham 
+                      giaSanPham = :giaSanPham,
+                      moTa = :moTa
                   WHERE maSanPham = :maSanPham
                   ";
     try {
       $statement = $this->db->prepare($statement);
       $statement->execute(array(
-        'maSanPham' => $input['maSanPham'] ?? null,
+        'maSanPham' => (int) $input['maSanPham'] ?? null,
         'tenSanPham' => $input['tenSanPham'] ?? null,
-        'soLuong' => $input['soLuong'] ?? null,
-        'gioiTinh' => $input['gioiTinh'] ?? null,
+        'soLuong' => $input['soLuong'] ?? 10,
+        'gioiTinh' => $input['gioiTinh'] ?? 'Nam',
         'mauSac' => $input['mauSac'] ?? null,
         'hinhAnh' => $input['hinhAnh'] ?? null,
-        'giaSanPham'=> $input['giaSanPham'] ?? null
+        'giaSanPham'=> $input['giaSanPham'] ?? null,
+        'moTa' => $input['moTa'] ?? ''
       ));
       return $statement->rowCount();
     } catch (\PDOException $e) {

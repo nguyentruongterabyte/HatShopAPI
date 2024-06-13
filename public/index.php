@@ -54,12 +54,12 @@ $requiresAuth = false;
 
 $protectedEndpoints = [
 
-  'product' => [],
-  'order' => [],
-  'cart' => [],
-  'rating' => [],
-  'bill' => [],
-  'report' => []
+  // 'product' => [],
+  // 'order' => [],
+  // 'cart' => [],
+  // 'rating' => [],
+  // 'bill' => [],
+  // 'report' => []
 ];
 
 if (isset($protectedEndpoints[$endpoint])) {

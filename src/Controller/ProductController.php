@@ -109,7 +109,7 @@ class ProductController {
     $id = isset($input['maSanPham']) ? $input['maSanPham'] : -1;
     $product = (object)[];
 
-    
+    if ($id != -1) {
       $product = $this->productGateway->find($id);
       if (!$product) {
         return Utils::notFoundResponse("Không có thông tin sản phẩm");
@@ -118,9 +118,8 @@ class ProductController {
         $imageURL = $product['hinhAnh'];
 
         $this->imageFactory->delete($imageURL);
-      } 
-    
-
+      }
+    }
     // Tải hình ảnh mới lên firebase
     if (isset($_FILES['file']) && $_FILES['file']['tmp_name']) {
 
@@ -186,6 +185,11 @@ class ProductController {
     if ($this->cartGateway->find($id)) {
       return Utils::conflictResponse("Sản phẩm đã có trong giỏ hàng của khách hàng, không thể xóa");
     }
+
+    // Xóa hình ảnh sản phẩm trên firebase
+    $imageURL = $result['hinhAnh'];
+
+    $this->imageFactory->delete($imageURL);
 
     $rowCount = $this->productGateway->delete($id);
     
